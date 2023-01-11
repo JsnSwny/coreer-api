@@ -14,8 +14,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingTop: StatusBar.currentHeight + 16,
     paddingBottom: 16,
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingHorizontal: 16,
   },
 });
 
