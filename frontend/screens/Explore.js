@@ -15,7 +15,7 @@ const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   return (
     <View>
-      <Header />
+      <Header title="coreer" />
       <View>
         <Title
           title="Explore"

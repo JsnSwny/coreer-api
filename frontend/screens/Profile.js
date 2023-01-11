@@ -1,14 +1,11 @@
 import React from "react";
 import { Text, View } from "react-native";
+import Header from "../components/Header";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   return (
     <View>
-      <Text>Text</Text>
-      <Text>Text</Text>
-      <Text>Text</Text>
-      <Text>Text</Text>
-      <Text>Text</Text>
+      <Header title="John Doe" backButton={true} navigation={navigation} />
     </View>
   );
 };
