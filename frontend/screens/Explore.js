@@ -1,11 +1,17 @@
 import React from "react";
-import { Text, View, TextInput, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableHighlight,
+} from "react-native";
 import Header from "../components/Header";
 import Title from "../components/Title";
 import UserCard from "../components/UserCard";
 import colors from "../config/colors";
 
-const Explore = () => {
+const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   return (
     <View>
@@ -34,12 +40,23 @@ const Explore = () => {
         }}
       >
         <UserCard
+          navigation={navigation}
           user={{
             name: "John Doe",
             currentRole: "Software Engineer at Google",
             location: "Edinburgh, United Kingdom",
             image:
               "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+          }}
+        />
+        <UserCard
+          navigation={navigation}
+          user={{
+            name: "Jane Doe",
+            currentRole: "Lead Designer at Microsoft",
+            location: "Edinburgh, United Kingdom",
+            image:
+              "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
           }}
         />
       </View>

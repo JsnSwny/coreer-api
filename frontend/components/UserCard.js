@@ -1,29 +1,45 @@
 import React from "react";
-import { Text, Image, View, StyleSheet } from "react-native";
+import {
+  Text,
+  Image,
+  View,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+} from "react-native";
 import colors from "../config/colors";
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, navigation }) => {
+  const handlePress = () => {
+    navigation.navigate("Profile");
+  };
   return (
-    <View style={styles.card}>
-      <View style={styles.cardTop}>
-        <Image
-          style={styles.profile}
-          source={{
-            uri: user.image,
-          }}
-        />
-        <View>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.role}>{user.currentRole}</Text>
-          <Text style={styles.location}>{user.location}</Text>
+    <TouchableOpacity
+      activeOpacity={0.5}
+      style={{ marginBottom: 16 }}
+      onPress={handlePress}
+    >
+      <View style={styles.card}>
+        <View style={styles.cardTop}>
+          <Image
+            style={styles.profile}
+            source={{
+              uri: user.image,
+            }}
+          />
+          <View>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.role}>{user.currentRole}</Text>
+            <Text style={styles.location}>{user.location}</Text>
+          </View>
+        </View>
+        <View style={styles.horizontalLine} />
+        <View style={styles.cardBottom}>
+          <Text style={styles.tag}>Professional</Text>
+          <Image style={styles.icon} source={require("../assets/heart.png")} />
         </View>
       </View>
-      <View style={styles.horizontalLine} />
-      <View style={styles.cardBottom}>
-        <Text style={styles.tag}>Professional</Text>
-        <Image style={styles.icon} source={require("../assets/heart.png")} />
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -36,7 +52,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: colors.stroke,
     borderWidth: 1,
-    marginVertical: 16,
     backgroundColor: "#fff",
     padding: 16,
     flex: 0,
