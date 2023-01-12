@@ -13,7 +13,7 @@ const Profile = ({ route, navigation }) => {
       </View>
       <View style={styles.headerCircle} />
       <ScrollView style={styles.container}>
-        <ProfileBox user={user} />
+        <ProfileBox navigation={navigation} user={user} />
       </ScrollView>
     </React.Fragment>
   );

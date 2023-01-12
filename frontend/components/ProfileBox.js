@@ -2,9 +2,9 @@ import React from "react";
 import { View, Pressable, StyleSheet, Image, Text, Button } from "react-native";
 import colors from "../config/colors";
 
-const ProfileBox = ({ user }) => {
+const ProfileBox = ({ user, navigation }) => {
   const handlePress = () => {
-    console.log("pressed");
+    navigation.navigate("Messaging", { user });
   };
   return (
     <React.Fragment>

@@ -1,9 +1,10 @@
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import Explore from "./screens/Explore";
 import Profile from "./screens/Profile";
 import Inbox from "./screens/Inbox";
 import Account from "./screens/Account";
+import LoginScreen from "./screens/LoginScreen";
+import MessagingScreen from "./screens/MessagingScreen";
 import colors from "./config/colors";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -58,8 +59,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={MyTabs} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Messaging" component={MessagingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
