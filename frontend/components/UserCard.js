@@ -8,6 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import colors from "../config/colors";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons/faLocationDot";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 const UserCard = ({ user, navigation }) => {
   const handlePress = () => {
@@ -30,13 +34,16 @@ const UserCard = ({ user, navigation }) => {
           <View>
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.role}>{user.currentRole}</Text>
-            <Text style={styles.location}>{user.location}</Text>
+            <View style={{ flexDirection: "row", marginTop: 8 }}>
+              <FontAwesomeIcon color={colors.grey} icon={faLocationDot} />
+              <Text style={styles.location}>{user.location}</Text>
+            </View>
           </View>
         </View>
         <View style={styles.horizontalLine} />
         <View style={styles.cardBottom}>
           <Text style={styles.tag}>Professional</Text>
-          <Image style={styles.icon} source={require("../assets/heart.png")} />
+          <FontAwesomeIcon color={colors.black} icon={faStar} size={20} />
         </View>
       </View>
     </TouchableOpacity>
@@ -46,7 +53,11 @@ const UserCard = ({ user, navigation }) => {
 const styles = StyleSheet.create({
   name: { fontSize: 16, fontWeight: "bold" },
   role: { fontSize: 14, color: colors.grey },
-  location: { fontSize: 12, color: colors.grey },
+  location: {
+    fontSize: 12,
+    color: colors.grey,
+    marginLeft: 4,
+  },
   profile: { width: 70, height: 70, marginRight: 16, borderRadius: 35 },
   card: {
     borderRadius: 10,
@@ -73,7 +84,7 @@ const styles = StyleSheet.create({
   },
   tag: {
     color: colors.primary,
-    backgroundColor: "rgba(25, 149, 185, 0.1)",
+    backgroundColor: colors.lightPrimary,
     padding: 8,
     borderRadius: 10,
     fontSize: 10,

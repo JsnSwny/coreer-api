@@ -5,8 +5,10 @@ import {
   TextInput,
   StyleSheet,
   TouchableHighlight,
+  Fragment,
 } from "react-native";
 import Header from "../components/Header";
+import Navigation from "../components/Navigation";
 import Title from "../components/Title";
 import UserCard from "../components/UserCard";
 import colors from "../config/colors";
@@ -14,7 +16,7 @@ import colors from "../config/colors";
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   return (
-    <View>
+    <React.Fragment>
       <Header title="coreer" />
       <View>
         <Title
@@ -60,7 +62,9 @@ const Explore = ({ navigation }) => {
           }}
         />
       </View>
-    </View>
+
+      <Navigation navigation={navigation} />
+    </React.Fragment>
   );
 };
 
