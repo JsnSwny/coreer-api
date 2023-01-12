@@ -85,7 +85,6 @@ const Explore = ({ navigation }) => {
         <View
           style={{
             paddingHorizontal: 16,
-            paddingBottom: 72,
           }}
         >
           <UserCard
@@ -120,7 +119,6 @@ const Explore = ({ navigation }) => {
           />
         </View>
       </ScrollView>
-      <Navigation navigation={navigation} />
     </React.Fragment>
   );
 };

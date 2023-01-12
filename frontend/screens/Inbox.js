@@ -11,7 +11,6 @@ const Inbox = ({ navigation }) => {
       <View>
         <Title title="Inbox" />
       </View>
-      <Navigation navigation={navigation} />
     </React.Fragment>
   );
 };

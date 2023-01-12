@@ -11,7 +11,6 @@ const Account = ({ navigation }) => {
       <View>
         <Title title="Account" />
       </View>
-      <Navigation navigation={navigation} />
     </React.Fragment>
   );
 };
