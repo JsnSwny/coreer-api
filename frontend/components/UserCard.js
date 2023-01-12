@@ -15,7 +15,7 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 const UserCard = ({ user, navigation }) => {
   const handlePress = () => {
-    navigation.navigate("Profile");
+    navigation.navigate("Profile", { user });
   };
   return (
     <TouchableOpacity

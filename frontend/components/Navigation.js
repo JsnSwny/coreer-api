@@ -11,7 +11,7 @@ const Navigation = ({ navigation }) => {
     <View style={styles.container}>
       <NavigationItem navigation={navigation} icon={faHouse} name="Explore" />
       <NavigationItem navigation={navigation} icon={faComment} name="Inbox" />
-      <NavigationItem navigation={navigation} icon={faUser} name="Profile" />
+      <NavigationItem navigation={navigation} icon={faUser} name="Account" />
     </View>
   );
 };
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     borderColor: colors.stroke,
     flexDirection: "row",
     alignItems: "center",
+    zIndex: 10,
   },
 });
 

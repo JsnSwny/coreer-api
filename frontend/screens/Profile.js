@@ -1,13 +1,35 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image, ScrollView, StyleSheet } from "react-native";
 import Header from "../components/Header";
+import ProfileBox from "../components/ProfileBox";
+import colors from "../config/colors";
 
-const Profile = ({ navigation }) => {
+const Profile = ({ route, navigation }) => {
+  const { user } = route.params;
   return (
-    <View>
-      <Header title="John Doe" backButton={true} navigation={navigation} />
-    </View>
+    <React.Fragment>
+      <View>
+        <Header title={user.name} backButton={true} navigation={navigation} />
+      </View>
+      <View style={styles.headerCircle} />
+      <ScrollView style={styles.container}>
+        <ProfileBox user={user} />
+      </ScrollView>
+    </React.Fragment>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+  },
+  headerCircle: {
+    width: "150%",
+    height: 200,
+    backgroundColor: colors.primary,
+    position: "absolute",
+    zIndex: -1,
+  },
+});
 
 export default Profile;

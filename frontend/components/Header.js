@@ -7,12 +7,19 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import colors from "../config/colors";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const Header = ({ title, backButton, navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={() => backButton && navigation.goBack()}>
       <View style={styles.container}>
-        {backButton && <Text style={[styles.title, styles.back]}>{"<"}</Text>}
+        {backButton && (
+          <FontAwesomeIcon
+            icon={faArrowLeft}
+            style={[styles.title, styles.back]}
+          />
+        )}
         <Text style={styles.title}>{title}</Text>
       </View>
     </TouchableWithoutFeedback>
