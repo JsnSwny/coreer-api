@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-o(^31kgv6=e*qg_g0jxb85yg6)etn+oyw5)_xj9u9y2qb^!@9=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
+
+
+# Application definition
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -37,8 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts'
+    'accounts',
+    'knox',
+    'rest_framework'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+}
 
 AUTH_USER_MODEL = "accounts.CustomUser" 
 
