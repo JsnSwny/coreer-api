@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 const AuthContext = React.createContext();
 const AuthState = React.createContext();
@@ -55,7 +56,6 @@ export const AuthProvider = ({ children }) => {
         console.log(e.response);
         return;
       }
-      console.log(`User token is ${userToken}`);
       // After restoring token, we may need to validate it in production apps
 
       // This will switch to the App screen or Auth screen and this loading
@@ -82,7 +82,8 @@ export const AuthProvider = ({ children }) => {
         axios
           .post("http://192.168.1.125:8000/api/auth/login", body, config)
           .then((res) => {
-            console.log(`Token is ${res.data.token}`);
+            console.log(`Logged in`);
+            SecureStore.setItemAsync("userToken", res.data.token);
             dispatch({ type: "SIGN_IN", token: res.data.token });
           })
           .catch((err) => {
