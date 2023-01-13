@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -17,6 +18,20 @@ import colors from "../config/colors";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
+  const [profiles, setProfiles] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://192.168.1.125:8000/api/profiles")
+      .then((res) => {
+        setProfiles(res.data);
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err);
+        return;
+      });
+  }, []);
 
   const DATA = [
     {
@@ -67,56 +82,26 @@ const Explore = ({ navigation }) => {
             subtitle="The top matches based on your preferences"
           />
         </View>
-        {/* <FlatList
-        data={DATA}
-        renderItem={({ item }) => (
-          <UserCard
-            navigation={navigation}
-            user={{
-              name: item.name,
-              currentRole: item.currentRole,
-              location: item.location,
-              image: item.image,
-            }}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-      /> */}
         <View
           style={{
             paddingHorizontal: 16,
           }}
         >
-          <UserCard
-            navigation={navigation}
-            user={{
-              name: "John Doe",
-              currentRole: "Software Engineer at Google",
-              location: "Edinburgh, United Kingdom",
-              image:
-                "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-            }}
-          />
-          <UserCard
-            navigation={navigation}
-            user={{
-              name: "Jane Doe",
-              currentRole: "Lead Designer at Microsoft",
-              location: "Edinburgh, United Kingdom",
-              image:
-                "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-            }}
-          />
-          <UserCard
-            navigation={navigation}
-            user={{
-              name: "Jane Doe",
-              currentRole: "Lead Designer at Microsoft",
-              location: "Edinburgh, United Kingdom",
-              image:
-                "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-            }}
-          />
+          {profiles.map((profile) => {
+            return (
+              <UserCard
+                key={profile.id}
+                navigation={navigation}
+                user={{
+                  name: profile.username,
+                  currentRole: "Software Engineer at Google",
+                  location: "Edinburgh, United Kingdom",
+                  image:
+                    "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                }}
+              />
+            );
+          })}
         </View>
       </ScrollView>
     </React.Fragment>
