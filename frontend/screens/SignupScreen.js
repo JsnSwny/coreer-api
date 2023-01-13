@@ -14,23 +14,24 @@ import axios from "axios";
 import colors from "../config/colors";
 import { useAuth } from "../context/AuthContext";
 
-const LoginScreen = ({ navigation }) => {
+const SignupScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const login = useAuth();
+  const auth = useAuth();
 
   const handlePress = () => {
-    login.signIn(username, password);
-    console.log("Pressed");
+    auth.signUp({ username, password, passwordConfirm });
   };
+
   return (
     <SafeAreaView>
       <Header title="Coreer" />
       <View style={styles.image}>
         <Image source={require("../assets/login-vector.png")} />
       </View>
-      <Text style={styles.text}>Login</Text>
+      <Text style={styles.text}>Sign Up</Text>
       <View style={styles.form}>
         <TextInput
           onChangeText={setUsername}
@@ -45,17 +46,24 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Password"
           style={styles.input}
         />
+        <TextInput
+          secureTextEntry={true}
+          onChangeText={setPasswordConfirm}
+          value={passwordConfirm}
+          placeholder="Confirm Password"
+          style={styles.input}
+        />
         <Pressable style={styles.button} onPress={handlePress}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
         <View style={styles.separator} />
         <Text style={styles.navText}>
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Text
-            onPress={() => navigation.navigate("Signup")}
+            onPress={() => navigation.navigate("Login")}
             style={{ color: colors.primary, fontWeight: "bold" }}
           >
-            Sign up
+            Login
           </Text>
         </Text>
       </View>
@@ -115,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;

@@ -14,6 +14,7 @@ import React from "react";
 import * as SecureStore from "expo-secure-store";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth, useAuthState } from "./context/AuthContext";
+import SignupScreen from "./screens/SignupScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -66,6 +67,7 @@ const StackNavigation = () => {
       {auth.userToken == null ? (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Signup" component={SignupScreen} />
         </>
       ) : (
         <>
