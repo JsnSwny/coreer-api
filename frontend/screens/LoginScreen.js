@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Text,
   Pressable,
@@ -12,31 +12,17 @@ import {
 import Header from "../components/Header";
 import axios from "axios";
 import colors from "../config/colors";
+import { useAuth } from "../context/AuthContext";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const handlePress = () => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    };
 
-    // Request Body
-    const body = JSON.stringify({ username, password });
-    console.log(body);
-    axios
-      .post("http://192.168.1.125:8000/api/auth/login", body, config)
-      .then((res) => {
-        console.log("LOGGED IN");
-        navigation.navigate("Home");
-      })
-      .catch((err) => {
-        console.log("error");
-        console.log(err);
-      });
+  const login = useAuth();
+
+  const handlePress = () => {
+    login.signIn(username, password);
+    console.log("Pressed");
   };
   return (
     <SafeAreaView>
@@ -53,6 +39,7 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
         />
         <TextInput
+          secureTextEntry={true}
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
