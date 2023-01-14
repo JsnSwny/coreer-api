@@ -19,7 +19,9 @@ const ProfileBox = ({ user, navigation }) => {
           <Text style={styles.tagText}>72% Match</Text>
         </View>
         <View style={styles.profileContent}>
-          <Text style={styles.name}>{user.name}</Text>
+          <Text style={styles.name}>
+            {user.first_name} {user.last_name}
+          </Text>
           <Text style={styles.description}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Montes,
             venenatis, sit suspendisse ullamcorper lectus dui, dictumst quis.

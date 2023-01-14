@@ -55,7 +55,22 @@ class UserAPI(generics.RetrieveAPIView):
 #     def get_queryset(self):
 #         return self.request.user
 
+class UpdateUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
 
+    def get_queryset(self):
+        return CustomUser.objects.all()
+
+    def get_object(self):
+        obj = get_object_or_404(CustomUser.objects.filter(id=self.kwargs["pk"]))
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 # Get User API
 

@@ -15,6 +15,8 @@ import * as SecureStore from "expo-secure-store";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth, useAuthState } from "./context/AuthContext";
 import SignupScreen from "./screens/SignupScreen";
+import OnboardingIntro from "./screens/onboarding/OnboardingIntro";
+import OnboardingPersonalDetails from "./screens/onboarding/OnboardingPersonalDetails";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -60,6 +62,23 @@ const MyTabs = () => {
   );
 };
 
+const OnboardingStack = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: { display: "none" },
+      })}
+    >
+      {/* <Tab.Screen name="OnboardingIntro" component={OnboardingIntro} /> */}
+      <Tab.Screen
+        name="OnboardingPersonalDetails"
+        component={OnboardingPersonalDetails}
+      />
+    </Tab.Navigator>
+  );
+};
+
 const StackNavigation = () => {
   const auth = useAuthState();
   return (
@@ -68,6 +87,10 @@ const StackNavigation = () => {
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
+        </>
+      ) : !auth.user.onboarded ? (
+        <>
+          <Stack.Screen name="Onboarding" component={OnboardingStack} />
         </>
       ) : (
         <>

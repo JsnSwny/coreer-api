@@ -34,33 +34,6 @@ const Explore = ({ navigation }) => {
       });
   }, []);
 
-  const DATA = [
-    {
-      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-      name: "John Doe",
-      role: "Software Engineer at Google",
-      location: "Edinburgh, United Kingdom",
-      image:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    },
-    {
-      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bb",
-      name: "Jane Doe",
-      role: "Software Engineer at Google",
-      location: "Edinburgh, United Kingdom",
-      image:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    },
-    {
-      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bc",
-      name: "Bob Marley",
-      role: "Software Engineer at Google",
-      location: "Edinburgh, United Kingdom",
-      image:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    },
-  ];
-
   return (
     <React.Fragment>
       <Header title="coreer" />
@@ -95,7 +68,8 @@ const Explore = ({ navigation }) => {
                 navigation={navigation}
                 user={{
                   id: profile.id,
-                  name: profile.username,
+                  first_name: profile.first_name,
+                  last_name: profile.last_name,
                   currentRole: "Software Engineer at Google",
                   location: "Edinburgh, United Kingdom",
                   image:

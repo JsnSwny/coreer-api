@@ -35,8 +35,6 @@ const UserCard = ({ user, navigation }) => {
       newLikes.push(user.id);
     }
 
-    console.log(newLikes);
-
     axios
       .put(
         `http://192.168.0.14:8000/api/profiles/${authState.user.id}/`,
@@ -46,7 +44,6 @@ const UserCard = ({ user, navigation }) => {
         config
       )
       .then((res) => {
-        console.log(res.data);
         authDispatch({
           type: "UPDATE_LIKES",
           likes: res.data.likes,
@@ -75,7 +72,9 @@ const UserCard = ({ user, navigation }) => {
             }}
           />
           <View>
-            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.name}>
+              {user.first_name} {user.last_name}
+            </Text>
             <Text style={styles.role}>{user.currentRole}</Text>
             <View style={{ flexDirection: "row", marginTop: 8 }}>
               <FontAwesomeIcon color={colors.grey} icon={faLocationDot} />

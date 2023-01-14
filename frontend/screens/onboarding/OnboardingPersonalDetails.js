@@ -9,54 +9,43 @@ import {
   Button,
   Image,
 } from "react-native";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import axios from "axios";
-import colors from "../config/colors";
-import { useAuth } from "../context/AuthContext";
+import colors from "../../config/colors";
+import { useAuth } from "../../context/AuthContext";
+import { useAuthState } from "../../context/AuthContext";
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const OnboardingPersonalDetails = ({ navigation }) => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const login = useAuth();
+  const state = useAuthState();
 
   const handlePress = () => {
-    login.signIn(email, password);
+    login.updateDetails(state, { first_name: firstName, last_name: lastName });
   };
+
   return (
     <SafeAreaView>
       <Header title="Coreer" />
-      <View style={styles.image}>
-        <Image source={require("../assets/login-vector.png")} />
-      </View>
-      <Text style={styles.text}>Login</Text>
+      <Text style={styles.text}>Personal Details</Text>
       <View style={styles.form}>
         <TextInput
-          onChangeText={setEmail}
-          value={email}
-          placeholder="Email"
+          onChangeText={setFirstName}
+          value={firstName}
+          placeholder="First name"
           style={styles.input}
         />
         <TextInput
-          secureTextEntry={true}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Password"
+          onChangeText={setLastName}
+          value={lastName}
+          placeholder="Last name"
           style={styles.input}
         />
         <Pressable style={styles.button} onPress={handlePress}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Get Started</Text>
         </Pressable>
-        <View style={styles.separator} />
-        <Text style={styles.navText}>
-          Don't have an account?{" "}
-          <Text
-            onPress={() => navigation.navigate("Signup")}
-            style={{ color: colors.primary, fontWeight: "bold" }}
-          >
-            Sign up
-          </Text>
-        </Text>
       </View>
     </SafeAreaView>
   );
@@ -114,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default OnboardingPersonalDetails;

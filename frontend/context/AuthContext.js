@@ -29,12 +29,19 @@ export const AuthProvider = ({ children }) => {
             user: action.user,
             isLoading: false,
           };
+        case "UPDATE_USER":
+          return {
+            ...prevState,
+            user: action.user,
+          };
         case "UPDATE_LIKES":
           return {
             ...prevState,
             user: { ...prevState.user, likes: action.likes },
           };
         case "SIGN_IN":
+          console.log("SIGNING IN");
+          console.log(action.user);
           return {
             ...prevState,
             isSignout: false,
@@ -46,6 +53,7 @@ export const AuthProvider = ({ children }) => {
             ...prevState,
             isSignout: true,
             userToken: null,
+            user: null,
           };
       }
     },
@@ -98,7 +106,7 @@ export const AuthProvider = ({ children }) => {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (username, password) => {
+      signIn: async (email, password) => {
         const config = {
           headers: {
             "Content-Type": "application/json",
@@ -107,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         };
 
         // Request Body
-        const body = JSON.stringify({ username, password });
+        const body = JSON.stringify({ email, password });
         axios
           .post("http://192.168.0.14:8000/api/auth/login", body, config)
           .then((res) => {
@@ -126,6 +134,33 @@ export const AuthProvider = ({ children }) => {
       signOut: () => {
         SecureStore.deleteItemAsync("userToken");
         dispatch({ type: "SIGN_OUT" });
+      },
+      updateDetails: async (state, data) => {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        };
+
+        config.headers["Authorization"] = `Token ${state.userToken}`;
+
+        axios
+          .put(
+            `http://192.168.0.14:8000/api/user/${state.user.id}/`,
+            data,
+            config
+          )
+          .then((res) => {
+            dispatch({
+              type: "UPDATE_USER",
+              user: res.data,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            return;
+          });
       },
       signUp: async (data) => {
         const config = {
