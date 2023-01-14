@@ -17,7 +17,7 @@ const SearchScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <Header backButton={true} title="Search" />
+      <Header backButton={true} title="Search" navigation={navigation} />
 
       <View
         style={{
