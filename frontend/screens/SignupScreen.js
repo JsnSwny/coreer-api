@@ -15,14 +15,14 @@ import colors from "../config/colors";
 import { useAuth } from "../context/AuthContext";
 
 const SignupScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
   const auth = useAuth();
 
   const handlePress = () => {
-    auth.signUp({ username, password, passwordConfirm });
+    auth.signUp({ email, password, passwordConfirm });
   };
 
   return (
@@ -34,8 +34,8 @@ const SignupScreen = ({ navigation }) => {
       <Text style={styles.text}>Sign Up</Text>
       <View style={styles.form}>
         <TextInput
-          onChangeText={setUsername}
-          value={username}
+          onChangeText={setEmail}
+          value={email}
           placeholder="Email"
           style={styles.input}
         />
