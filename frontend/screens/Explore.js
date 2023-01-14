@@ -15,19 +15,20 @@ import Navigation from "../components/Navigation";
 import Title from "../components/Title";
 import UserCard from "../components/UserCard";
 import colors from "../config/colors";
+import { useAuthState } from "../context/AuthContext";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   const [profiles, setProfiles] = useState([]);
+  const authState = useAuthState();
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.125:8000/api/profiles")
+      .get("http://192.168.0.14:8000/api/profiles")
       .then((res) => {
         setProfiles(res.data);
       })
       .catch((err) => {
-        console.log("error");
         console.log(err);
         return;
       });
@@ -93,6 +94,7 @@ const Explore = ({ navigation }) => {
                 key={profile.id}
                 navigation={navigation}
                 user={{
+                  id: profile.id,
                   name: profile.username,
                   currentRole: "Software Engineer at Google",
                   location: "Edinburgh, United Kingdom",

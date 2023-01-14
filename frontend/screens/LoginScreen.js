@@ -22,7 +22,6 @@ const LoginScreen = ({ navigation }) => {
 
   const handlePress = () => {
     login.signIn(username, password);
-    console.log("Pressed");
   };
   return (
     <SafeAreaView>

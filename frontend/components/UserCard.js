@@ -12,11 +12,54 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons/faLocationDot";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { useAuth, useAuthState, useAuthDispatch } from "../context/AuthContext";
+import axios from "axios";
 
 const UserCard = ({ user, navigation }) => {
+  const authState = useAuthState();
+  const authDispatch = useAuthDispatch();
+
+  const likeUser = () => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    config.headers["Authorization"] = `Token ${authState.userToken}`;
+    let newLikes = authState.user.likes;
+
+    if (authState.user.likes.includes(user.id)) {
+      newLikes = [...newLikes.filter((item) => item != user.id)];
+    } else {
+      newLikes.push(user.id);
+    }
+
+    console.log(newLikes);
+
+    axios
+      .put(
+        `http://192.168.0.14:8000/api/profiles/${authState.user.id}/`,
+        {
+          likes: newLikes,
+        },
+        config
+      )
+      .then((res) => {
+        console.log(res.data);
+        authDispatch({
+          type: "UPDATE_LIKES",
+          likes: res.data.likes,
+        });
+      })
+
+      .catch((err) => console.log("error"));
+  };
+
   const handlePress = () => {
     navigation.navigate("Profile", { user });
   };
+
   return (
     <TouchableOpacity
       activeOpacity={0.5}
@@ -43,7 +86,17 @@ const UserCard = ({ user, navigation }) => {
         <View style={styles.horizontalLine} />
         <View style={styles.cardBottom}>
           <Text style={styles.tag}>Professional</Text>
-          <FontAwesomeIcon color={colors.black} icon={faStar} size={20} />
+          <TouchableOpacity onPress={likeUser}>
+            <FontAwesomeIcon
+              color={
+                authState.user.likes.includes(user.id)
+                  ? colors.primary
+                  : colors.black
+              }
+              icon={faStar}
+              size={20}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>

@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 
 const AuthContext = React.createContext();
 const AuthState = React.createContext();
+const AuthDispatch = React.createContext();
 
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -11,6 +12,10 @@ export const useAuth = () => {
 
 export const useAuthState = () => {
   return useContext(AuthState);
+};
+
+export const useAuthDispatch = () => {
+  return useContext(AuthDispatch);
 };
 
 export const AuthProvider = ({ children }) => {
@@ -21,13 +26,20 @@ export const AuthProvider = ({ children }) => {
           return {
             ...prevState,
             userToken: action.token,
+            user: action.user,
             isLoading: false,
+          };
+        case "UPDATE_LIKES":
+          return {
+            ...prevState,
+            user: { ...prevState.user, likes: action.likes },
           };
         case "SIGN_IN":
           return {
             ...prevState,
             isSignout: false,
             userToken: action.token,
+            user: action.user,
           };
         case "SIGN_OUT":
           return {
@@ -41,6 +53,7 @@ export const AuthProvider = ({ children }) => {
       isLoading: true,
       isSignout: false,
       userToken: null,
+      user: null,
     }
   );
 
@@ -52,15 +65,32 @@ export const AuthProvider = ({ children }) => {
       try {
         userToken = await SecureStore.getItemAsync("userToken");
       } catch (e) {
-        console.log("error");
         console.log(e.response);
         return;
       }
-      // After restoring token, we may need to validate it in production apps
 
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      dispatch({ type: "RESTORE_TOKEN", token: userToken });
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      };
+
+      config.headers["Authorization"] = `Token ${userToken}`;
+
+      axios
+        .get("http://192.168.0.14:8000/api/auth/user", config)
+        .then((res) => {
+          dispatch({
+            type: "RESTORE_TOKEN",
+            token: userToken,
+            user: res.data,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          return;
+        });
     };
 
     bootstrapAsync();
@@ -79,14 +109,16 @@ export const AuthProvider = ({ children }) => {
         // Request Body
         const body = JSON.stringify({ username, password });
         axios
-          .post("http://192.168.1.125:8000/api/auth/login", body, config)
+          .post("http://192.168.0.14:8000/api/auth/login", body, config)
           .then((res) => {
-            console.log(`Logged in`);
             SecureStore.setItemAsync("userToken", res.data.token);
-            dispatch({ type: "SIGN_IN", token: res.data.token });
+            dispatch({
+              type: "SIGN_IN",
+              token: res.data.token,
+              user: res.data.user,
+            });
           })
           .catch((err) => {
-            console.log("error");
             console.log(err);
             return;
           });
@@ -104,14 +136,16 @@ export const AuthProvider = ({ children }) => {
         };
 
         axios
-          .post("http://192.168.1.125:8000/api/auth/register", data, config)
+          .post("http://192.168.0.14:8000/api/auth/register", data, config)
           .then((res) => {
-            console.log(`Registered`);
             SecureStore.setItemAsync("userToken", res.data.token);
-            dispatch({ type: "SIGN_IN", token: res.data.token });
+            dispatch({
+              type: "SIGN_IN",
+              token: res.data.token,
+              user: res.data.user,
+            });
           })
           .catch((err) => {
-            console.log("error");
             console.log(err);
             return;
           });
@@ -122,7 +156,11 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <AuthState.Provider value={state}>{children}</AuthState.Provider>
+      <AuthState.Provider value={state}>
+        <AuthDispatch.Provider value={dispatch}>
+          {children}
+        </AuthDispatch.Provider>
+      </AuthState.Provider>
     </AuthContext.Provider>
   );
 };
