@@ -22,6 +22,10 @@ const Explore = ({ navigation }) => {
   const [profiles, setProfiles] = useState([]);
   const authState = useAuthState();
 
+  const searchSubmit = () => {
+    navigation.navigate("Search", { search: text });
+  };
+
   useEffect(() => {
     axios
       .get("http://192.168.0.14:8000/api/profiles")
@@ -48,6 +52,8 @@ const Explore = ({ navigation }) => {
             onChangeText={onChangeText}
             value={text}
             placeholder="E.g., ‘Software Engineer’"
+            onSubmitEditing={searchSubmit}
+            clearButtonMode="while-editing"
           />
         </View>
         <View>

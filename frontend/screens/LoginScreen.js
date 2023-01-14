@@ -13,6 +13,7 @@ import Header from "../components/Header";
 import axios from "axios";
 import colors from "../config/colors";
 import { useAuth } from "../context/AuthContext";
+import globalStyles from "../config/globalStyles";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -35,14 +36,14 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={setEmail}
           value={email}
           placeholder="Email"
-          style={styles.input}
+          style={globalStyles.input}
         />
         <TextInput
           secureTextEntry={true}
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
-          style={styles.input}
+          style={globalStyles.input}
         />
         <Pressable style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Login</Text>
@@ -89,14 +90,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   input: {
-    backgroundColor: "#fff",
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    color: colors.grey,
-    borderColor: colors.stroke,
-    fontSize: 14,
     marginBottom: 16,
   },
   button: {

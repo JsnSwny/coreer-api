@@ -17,6 +17,7 @@ import { useAuth, useAuthState } from "./context/AuthContext";
 import SignupScreen from "./screens/SignupScreen";
 import OnboardingIntro from "./screens/onboarding/OnboardingIntro";
 import OnboardingPersonalDetails from "./screens/onboarding/OnboardingPersonalDetails";
+import SearchScreen from "./screens/SearchScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -97,6 +98,7 @@ const StackNavigation = () => {
           <Stack.Screen name="Home" component={MyTabs} />
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Messaging" component={MessagingScreen} />
+          <Stack.Screen name="Search" component={SearchScreen} />
         </>
       )}
     </Stack.Navigator>

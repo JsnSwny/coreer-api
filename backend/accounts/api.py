@@ -55,9 +55,13 @@ class UserAPI(generics.RetrieveAPIView):
 #     def get_queryset(self):
 #         return self.request.user
 
+from rest_framework import filters
+
 class UpdateUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name', 'last_name']
 
     def get_queryset(self):
         return CustomUser.objects.all()
