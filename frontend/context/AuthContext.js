@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import { API_URL } from "@env";
 
 const AuthContext = React.createContext();
 const AuthState = React.createContext();
@@ -87,7 +88,7 @@ export const AuthProvider = ({ children }) => {
       config.headers["Authorization"] = `Token ${userToken}`;
 
       axios
-        .get("http://192.168.0.14:8000/api/auth/user", config)
+        .get(`${API_URL}/api/auth/user`, config)
         .then((res) => {
           dispatch({
             type: "RESTORE_TOKEN",
@@ -117,7 +118,7 @@ export const AuthProvider = ({ children }) => {
         // Request Body
         const body = JSON.stringify({ email, password });
         axios
-          .post("http://192.168.0.14:8000/api/auth/login", body, config)
+          .post(`${API_URL}/api/auth/login`, body, config)
           .then((res) => {
             SecureStore.setItemAsync("userToken", res.data.token);
             dispatch({
@@ -146,11 +147,7 @@ export const AuthProvider = ({ children }) => {
         config.headers["Authorization"] = `Token ${state.userToken}`;
 
         axios
-          .put(
-            `http://192.168.0.14:8000/api/user/${state.user.id}/`,
-            data,
-            config
-          )
+          .put(`${API_URL}/api/user/${state.user.id}/`, data, config)
           .then((res) => {
             dispatch({
               type: "UPDATE_USER",
@@ -171,7 +168,7 @@ export const AuthProvider = ({ children }) => {
         };
 
         axios
-          .post("http://192.168.0.14:8000/api/auth/register", data, config)
+          .post(`${API_URL}/api/auth/register`, data, config)
           .then((res) => {
             SecureStore.setItemAsync("userToken", res.data.token);
             dispatch({

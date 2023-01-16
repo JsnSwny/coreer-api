@@ -16,6 +16,7 @@ import Title from "../components/Title";
 import UserCard from "../components/UserCard";
 import colors from "../config/colors";
 import { useAuthState } from "../context/AuthContext";
+import { API_URL } from "@env";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
@@ -28,7 +29,7 @@ const Explore = ({ navigation }) => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.0.14:8000/api/profiles")
+      .get(`${API_URL}/api/profiles`)
       .then((res) => {
         setProfiles(res.data);
       })

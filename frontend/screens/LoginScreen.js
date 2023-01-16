@@ -24,6 +24,7 @@ const LoginScreen = ({ navigation }) => {
   const handlePress = () => {
     login.signIn(email, password);
   };
+
   return (
     <SafeAreaView>
       <Header title="Coreer" />
@@ -36,14 +37,14 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={setEmail}
           value={email}
           placeholder="Email"
-          style={globalStyles.input}
+          style={[globalStyles.input, styles.input]}
         />
         <TextInput
           secureTextEntry={true}
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
-          style={globalStyles.input}
+          style={[globalStyles.input, styles.input]}
         />
         <Pressable style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Login</Text>

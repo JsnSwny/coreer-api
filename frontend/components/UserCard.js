@@ -14,6 +14,7 @@ import { faLocationDot } from "@fortawesome/free-solid-svg-icons/faLocationDot";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useAuth, useAuthState, useAuthDispatch } from "../context/AuthContext";
 import axios from "axios";
+import { API_URL } from "@env";
 
 const UserCard = ({ user, navigation }) => {
   const authState = useAuthState();
@@ -37,7 +38,7 @@ const UserCard = ({ user, navigation }) => {
 
     axios
       .put(
-        `http://192.168.0.14:8000/api/profiles/${authState.user.id}/`,
+        `${API_URL}/api/profiles/${authState.user.id}/`,
         {
           likes: newLikes,
         },

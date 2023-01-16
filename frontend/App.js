@@ -9,7 +9,7 @@ import colors from "./config/colors";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/Ionicons";
 import React from "react";
 import * as SecureStore from "expo-secure-store";
 import { AuthProvider } from "./context/AuthContext";
@@ -18,6 +18,7 @@ import SignupScreen from "./screens/SignupScreen";
 import OnboardingIntro from "./screens/onboarding/OnboardingIntro";
 import OnboardingPersonalDetails from "./screens/onboarding/OnboardingPersonalDetails";
 import SearchScreen from "./screens/SearchScreen";
+import FavouritesScreen from "./screens/FavouritesScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -40,12 +41,14 @@ const MyTabs = () => {
             iconName = focused ? "chatbubble" : "chatbubble-outline";
           } else if (route.name === "Account") {
             iconName = focused ? "person" : "person-outline";
+          } else if (route.name === "Favourites") {
+            iconName = focused ? "star" : "star-outline";
           }
 
           // You can return any component that you like here!
           return (
             <View style={styles.tabItem}>
-              <Ionicons name={iconName} size={size} color={color} />
+              <Icon name={iconName} size={size} color={color} />
               <Text style={[styles.tabText, focused && styles.tabTextActive]}>
                 {route.name}
               </Text>
@@ -58,6 +61,7 @@ const MyTabs = () => {
     >
       <Tab.Screen name="Explore" component={Explore} />
       <Tab.Screen name="Inbox" component={Inbox} />
+      <Tab.Screen name="Favourites" component={FavouritesScreen} />
       <Tab.Screen name="Account" component={Account} />
     </Tab.Navigator>
   );

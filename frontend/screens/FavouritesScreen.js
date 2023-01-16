@@ -4,44 +4,39 @@ import { TextInput, View, Text } from "react-native";
 import UserCard from "../components/UserCard";
 import Header from "../components/Header";
 import globalStyles from "../config/globalStyles";
+import { useAuthState } from "../context/AuthContext";
+import Title from "../components/Title";
 import { API_URL } from "@env";
 
-const SearchScreen = ({ route, navigation }) => {
-  const { search } = route.params;
+const FavouritesScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
-  const [searchInput, setSearchInput] = useState(search);
+  const authState = useAuthState();
+
   useEffect(() => {
+    console.log(authState.user.likes.toString());
     axios
-      .get(`${API_URL}/api/user/?search=${search}`)
-      .then((res) => setResults(res.data));
-  }, []);
+      .get(`${API_URL}/api/user/?id__in=${authState.user.likes.toString()},`)
+      .then((res) => setResults(res.data))
+      .catch((err) => {
+        console.log(err.response);
+        return;
+      });
+  }, [authState]);
 
   return (
     <>
-      <Header backButton={true} title="Search" navigation={navigation} />
-
+      <Header title="coreer" />
+      <View>
+        <Title
+          title="Favourites"
+          subtitle={`You have ${results.length} favourites`}
+        />
+      </View>
       <View
         style={{
           paddingHorizontal: 16,
-          marginTop: 16,
         }}
       >
-        <View>
-          <Text style={{ marginBottom: 4, fontWeight: "bold" }}>
-            {results.length} result{results.length > 1 && "s"} for:
-          </Text>
-          <TextInput
-            onChangeText={setSearchInput}
-            value={searchInput}
-            style={[globalStyles.input, { marginBottom: 16 }]}
-            onSubmitEditing={() =>
-              axios
-                .get(`${API_URL}/api/user/?search=${searchInput}`)
-                .then((res) => setResults(res.data))
-            }
-          />
-        </View>
-
         {results.map((profile) => {
           return (
             <UserCard
@@ -64,4 +59,4 @@ const SearchScreen = ({ route, navigation }) => {
   );
 };
 
-export default SearchScreen;
+export default FavouritesScreen;

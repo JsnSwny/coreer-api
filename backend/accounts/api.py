@@ -56,12 +56,21 @@ class UserAPI(generics.RetrieveAPIView):
 #         return self.request.user
 
 from rest_framework import filters
+# from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class UpdateUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    filter_backends = [filters.SearchFilter]
+
     search_fields = ['first_name', 'last_name']
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = {
+        'id': ["in", "exact"], # note the 'in' field
+    }
+    
 
     def get_queryset(self):
         return CustomUser.objects.all()
