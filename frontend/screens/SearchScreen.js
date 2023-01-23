@@ -14,7 +14,7 @@ const SearchScreen = ({ route, navigation }) => {
     axios
       .get(`${API_URL}/api/user/?search=${search}`)
       .then((res) => setResults(res.data));
-  }, []);
+  }, [search]);
 
   return (
     <>

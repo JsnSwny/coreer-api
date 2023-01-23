@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Header from "../components/Header";
 import Navigation from "../components/Navigation";
 import Title from "../components/Title";
@@ -27,17 +28,18 @@ const Explore = ({ navigation }) => {
     navigation.navigate("Search", { search: text });
   };
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/api/profiles`)
-      .then((res) => {
-        setProfiles(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        return;
-      });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      axios
+        .get(`${API_URL}/api/profiles`)
+        .then((res) => {
+          setProfiles(res.data);
+        })
+        .catch((err) => {
+          return;
+        });
+    }, [])
+  );
 
   return (
     <React.Fragment>

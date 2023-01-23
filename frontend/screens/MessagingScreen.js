@@ -10,6 +10,7 @@ import {
 import colors from "../config/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { Chat } from "../components/chat/Chat";
 
 const MessagingScreen = ({ navigation, route }) => {
   const { user } = route.params;
@@ -26,6 +27,7 @@ const MessagingScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Message {user.name}</Text>
         </View>
       </TouchableWithoutFeedback>
+      <Chat />
       <View
         style={{
           justifyContent: "center",

@@ -13,7 +13,6 @@ const FavouritesScreen = ({ navigation }) => {
   const authState = useAuthState();
 
   useEffect(() => {
-    console.log(authState.user.likes.toString());
     axios
       .get(`${API_URL}/api/user/?id__in=${authState.user.likes.toString()},`)
       .then((res) => setResults(res.data))

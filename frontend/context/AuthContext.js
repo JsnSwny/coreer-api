@@ -41,8 +41,6 @@ export const AuthProvider = ({ children }) => {
             user: { ...prevState.user, likes: action.likes },
           };
         case "SIGN_IN":
-          console.log("SIGNING IN");
-          console.log(action.user);
           return {
             ...prevState,
             isSignout: false,
@@ -120,6 +118,7 @@ export const AuthProvider = ({ children }) => {
         axios
           .post(`${API_URL}/api/auth/login`, body, config)
           .then((res) => {
+            console.log("User has been signed in");
             SecureStore.setItemAsync("userToken", res.data.token);
             dispatch({
               type: "SIGN_IN",
