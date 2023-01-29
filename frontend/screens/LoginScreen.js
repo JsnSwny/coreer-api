@@ -22,6 +22,7 @@ const LoginScreen = ({ navigation }) => {
   const login = useAuth();
 
   const handlePress = () => {
+    console.log(email, password);
     login.signIn(email, password);
   };
 

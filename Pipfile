@@ -8,6 +8,9 @@ django = "*"
 djangorestframework = "*"
 django-rest-knox = "*"
 django-filter = "*"
+channels = "*"
+daphne = "*"
+channels-redis = "*"
 
 [dev-packages]
 

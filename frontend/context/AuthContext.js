@@ -115,6 +115,8 @@ export const AuthProvider = ({ children }) => {
 
         // Request Body
         const body = JSON.stringify({ email, password });
+        console.log(`${API_URL}/api/auth/login`);
+        console.log(body);
         axios
           .post(`${API_URL}/api/auth/login`, body, config)
           .then((res) => {
