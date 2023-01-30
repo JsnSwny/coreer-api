@@ -4,12 +4,14 @@ import { API_URLL as API_URL } from "@env";
 import { useAuthState } from "../../context/AuthContext";
 import useWebSocket, { ReadyState } from "react-native-use-websocket";
 
-export function Chat() {
+export function Chat({ toUser }) {
   const [messages, setMessages] = useState([]);
 
   const authState = useAuthState();
+  const userIds = [authState.user.id, toUser.id].sort();
+  const roomName = `${userIds[0]}__${userIds[1]}`;
   const { readyState } = useWebSocket(
-    "ws://137.195.118.52:8000/ws/chat/Hello/",
+    `ws://137.195.118.52:8000/ws/chat/${roomName}/`,
     {
       onMessage: (e) => {
         if (typeof e.data === "string") {
@@ -29,7 +31,7 @@ export function Chat() {
   );
 
   const { sendJsonMessage } = useWebSocket(
-    "ws://137.195.118.52:8000/ws/chat/Hello/"
+    `ws://137.195.118.52:8000/ws/chat/${roomName}/`
   );
 
   useEffect(() => {
@@ -63,7 +65,10 @@ export function Chat() {
   }, []);
 
   const onSend = useCallback((messages = []) => {
+    console.log("Sending Message");
+    console.log(messages);
     sendJsonMessage({
+      type: "chat_message",
       message: messages,
     });
   }, []);

@@ -24,10 +24,10 @@ const MessagingScreen = ({ navigation, route }) => {
             style={[styles.title, styles.back]}
           />
 
-          <Text style={styles.title}>Message {user.name}</Text>
+          <Text style={styles.title}>Message {user.first_name}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <Chat />
+      <Chat toUser={user} />
       <View
         style={{
           justifyContent: "center",

@@ -11,6 +11,7 @@ django-filter = "*"
 channels = "*"
 daphne = "*"
 channels-redis = "*"
+uuid = "*"
 
 [dev-packages]
 

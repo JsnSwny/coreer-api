@@ -5,6 +5,7 @@ from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, Re
 from .models import CustomUser
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
+from django.contrib.auth import login
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
@@ -30,6 +31,7 @@ class LoginAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
+        login(request, user)
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]
