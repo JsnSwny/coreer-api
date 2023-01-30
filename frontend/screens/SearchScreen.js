@@ -4,7 +4,7 @@ import { TextInput, View, Text } from "react-native";
 import UserCard from "../components/UserCard";
 import Header from "../components/Header";
 import globalStyles from "../config/globalStyles";
-import { API_URL } from "@env";
+import { API_URLL as API_URL } from "@env";
 
 const SearchScreen = ({ route, navigation }) => {
   const { search } = route.params;

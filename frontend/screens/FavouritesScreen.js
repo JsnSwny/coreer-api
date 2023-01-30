@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import globalStyles from "../config/globalStyles";
 import { useAuthState } from "../context/AuthContext";
 import Title from "../components/Title";
-import { API_URL } from "@env";
+import { API_URLL as API_URL } from "@env";
 
 const FavouritesScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);

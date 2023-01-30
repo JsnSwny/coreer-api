@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { API_URL } from "@env";
+import { API_URLL as API_URL } from "@env";
 
 const AuthContext = React.createContext();
 const AuthState = React.createContext();
