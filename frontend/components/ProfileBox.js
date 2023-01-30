@@ -4,7 +4,7 @@ import colors from "../config/colors";
 
 const ProfileBox = ({ user, navigation }) => {
   const handlePress = () => {
-    navigation.navigate("Messaging", { user });
+    navigation.navigate("Messaging", { toUser: user });
   };
   return (
     <React.Fragment>

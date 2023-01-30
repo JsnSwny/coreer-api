@@ -4,6 +4,7 @@ from asgiref.sync import async_to_sync
 from .models import Conversation, Message
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.auth import get_user_model
+from .serializers import MessageSerializer
 
 User = get_user_model()
 
@@ -11,7 +12,9 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
-        self.room_name = None
+        self.user = None
+        self.conversation_name = None
+        self.conversation = None
 
     def get_receiver(self):
         userIds = self.conversation_name.split("__")
@@ -19,8 +22,6 @@ class ChatConsumer(JsonWebsocketConsumer):
             print(id)
             print(self.user.id)
             if id != self.user.id:
-                print("Getting user")
-                print(User.objects.get(id=id))
                 return User.objects.get(id=id)
 
     def connect(self):
@@ -36,7 +37,18 @@ class ChatConsumer(JsonWebsocketConsumer):
             self.channel_name,
         )
 
+        
+
         self.accept()
+
+        messages = self.conversation.messages.all().order_by("timestamp")[0:50]
+        print(messages)
+        messages_ser = MessageSerializer(messages, many=True).data
+
+        self.send_json({
+            "type": "message_history",
+            "messages": messages_ser,
+        })
 
     def disconnect(self, close_code):
         # Leave room group
@@ -44,18 +56,6 @@ class ChatConsumer(JsonWebsocketConsumer):
             self.conversation_name,
             self.channel_name
         )
-
-    # Receive message from WebSocket
-    # def receive(self, text_data):
-    #     text_data_json = json.loads(text_data)
-    #     message = text_data_json["message"]
-    #     print("Received")
-    #     print(message)
-
-    #     # Send message to room group
-    #     async_to_sync(self.channel_layer.group_send)(
-    #         self.conversation_name, {"type": "chat_message", "message": message}
-    #     )
 
     def receive_json(self, content, **kwargs):
         message_type = content["type"]
@@ -71,7 +71,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                 self.conversation_name,
                 {
                     "type": "chat_message_echo",
-                    "message": content["message"],
+                    "message": MessageSerializer(message, many=False).data,
                 },
             )
         return super().receive_json(content, **kwargs)

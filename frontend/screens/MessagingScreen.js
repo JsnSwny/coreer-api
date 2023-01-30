@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Text,
   StatusBar,
@@ -6,15 +6,72 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   TextInput,
+  ScrollView,
 } from "react-native";
 import colors from "../config/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { Chat } from "../components/chat/Chat";
+import { faArrowLeft, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { API_URLL as API_URL } from "@env";
+import { useAuthState } from "../context/AuthContext";
+import useWebSocket, { ReadyState } from "react-native-use-websocket";
 
 const MessagingScreen = ({ navigation, route }) => {
-  const { user } = route.params;
+  const { toUser } = route.params;
   const [message, setMessage] = useState("");
+  const [count, setCount] = useState(0);
+
+  const authState = useAuthState();
+  const userIds = [authState.user.id, toUser.id].sort();
+  const roomName = `${userIds[0]}__${userIds[1]}`;
+  const [messageHistory, setMessageHistory] = useState([]);
+  const { readyState } = useWebSocket(
+    `ws://137.195.118.52:8000/ws/chat/${roomName}/`,
+    {
+      onMessage: (e) => {
+        const data = JSON.parse(e.data);
+        switch (data.type) {
+          case "chat_message_echo":
+            setMessageHistory((previous) => {
+              console.log("CHAT MESSAGE ECHO");
+              console.log([...previous, data.message]);
+              return [...previous, data.message];
+            });
+            break;
+          case "message_history":
+            setMessageHistory(data.messages);
+            break;
+        }
+      },
+      onOpen: () => {
+        console.log("Connected!");
+      },
+      onClose: () => {
+        console.log("Disconnected!");
+      },
+    }
+  );
+
+  const { sendJsonMessage } = useWebSocket(
+    `ws://137.195.118.52:8000/ws/chat/${roomName}/`
+  );
+  const onSend = useCallback((messages = []) => {
+    console.log("Sending Message");
+    // console.log(messages.map((item) => item.content));
+    sendJsonMessage({
+      type: "chat_message",
+      message: messages,
+    });
+    setMessage("");
+  }, []);
+
+  const sendMessage = () => {
+    console.log("Sending message");
+    sendJsonMessage({
+      type: "chat_message",
+      message,
+    });
+    setMessage("");
+  };
   return (
     <React.Fragment>
       <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
@@ -24,23 +81,42 @@ const MessagingScreen = ({ navigation, route }) => {
             style={[styles.title, styles.back]}
           />
 
-          <Text style={styles.title}>Message {user.first_name}</Text>
+          <Text style={styles.title}>Message {toUser.first_name}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <Chat toUser={user} />
+      <Text>{count}</Text>
+      {/* <Chat toUser={user} /> */}
+      <ScrollView style={{ flex: 1 }}>
+        {messageHistory.map((message) => (
+          <Text key={message.id}>{message.content}</Text>
+        ))}
+      </ScrollView>
       <View
         style={{
           justifyContent: "center",
           alignItems: "center",
-          flex: 1,
+          flexDirection: "row",
         }}
       >
         <TextInput
           style={styles.input}
           onChangeText={setMessage}
           text={message}
+          value={message}
           placeholder="Type here..."
         />
+        {message.length > 0 && (
+          <TouchableWithoutFeedback onPress={sendMessage}>
+            <View>
+              <FontAwesomeIcon
+                icon={faPaperPlane}
+                style={{ marginRight: 16, zIndex: 100 }}
+                size={20}
+                color={colors.primary}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        )}
       </View>
     </React.Fragment>
   );
@@ -56,15 +132,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    borderColor: colors.primary,
-    borderWidth: 2,
     borderRadius: 25,
-    width: "90%",
-    position: "absolute",
-    bottom: 16,
-    height: 50,
+    height: 35,
     paddingHorizontal: 16,
     backgroundColor: "#fff",
+    flex: 1,
+    margin: 16,
   },
   title: {
     color: "#fff",
