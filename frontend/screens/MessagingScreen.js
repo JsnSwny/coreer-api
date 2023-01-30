@@ -12,16 +12,16 @@ import colors from "../config/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { API_URLL as API_URL } from "@env";
-import { useAuthState } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import useWebSocket, { ReadyState } from "react-native-use-websocket";
+import { Message } from "../components/chat/Message";
 
 const MessagingScreen = ({ navigation, route }) => {
   const { toUser } = route.params;
   const [message, setMessage] = useState("");
-  const [count, setCount] = useState(0);
 
-  const authState = useAuthState();
-  const userIds = [authState.user.id, toUser.id].sort();
+  const { state, dispatch } = useAuth();
+  const userIds = [state.user.id, toUser.id].sort();
   const roomName = `${userIds[0]}__${userIds[1]}`;
   const [messageHistory, setMessageHistory] = useState([]);
   const { readyState } = useWebSocket(
@@ -54,18 +54,8 @@ const MessagingScreen = ({ navigation, route }) => {
   const { sendJsonMessage } = useWebSocket(
     `ws://137.195.118.52:8000/ws/chat/${roomName}/`
   );
-  const onSend = useCallback((messages = []) => {
-    console.log("Sending Message");
-    // console.log(messages.map((item) => item.content));
-    sendJsonMessage({
-      type: "chat_message",
-      message: messages,
-    });
-    setMessage("");
-  }, []);
 
   const sendMessage = () => {
-    console.log("Sending message");
     sendJsonMessage({
       type: "chat_message",
       message,
@@ -84,11 +74,9 @@ const MessagingScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Message {toUser.first_name}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <Text>{count}</Text>
-      {/* <Chat toUser={user} /> */}
       <ScrollView style={{ flex: 1 }}>
         {messageHistory.map((message) => (
-          <Text key={message.id}>{message.content}</Text>
+          <Message key={message.id} message={message.content} />
         ))}
       </ScrollView>
       <View

@@ -6,14 +6,14 @@ import Navigation from "../components/Navigation";
 import { useAuth } from "../context/AuthContext";
 
 const Account = ({ navigation }) => {
-  const auth = useAuth();
+  const { authContext, state } = useAuth();
   return (
     <React.Fragment>
       <Header title="coreer" />
       <View>
         <Title title="Account" />
       </View>
-      <Button title="Log out" onPress={() => auth.signOut()} />
+      <Button title="Log out" onPress={() => authContext.signOut()} />
     </React.Fragment>
   );
 };

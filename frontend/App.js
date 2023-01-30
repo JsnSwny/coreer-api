@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import React from "react";
 import * as SecureStore from "expo-secure-store";
 import { AuthProvider } from "./context/AuthContext";
-import { useAuth, useAuthState } from "./context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 import SignupScreen from "./screens/SignupScreen";
 import OnboardingIntro from "./screens/onboarding/OnboardingIntro";
 import OnboardingPersonalDetails from "./screens/onboarding/OnboardingPersonalDetails";
@@ -85,15 +85,15 @@ const OnboardingStack = () => {
 };
 
 const StackNavigation = () => {
-  const auth = useAuthState();
+  const { state, dispatch } = useAuth();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {auth.userToken == null ? (
+      {state.userToken == null ? (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
         </>
-      ) : !auth.user.onboarded ? (
+      ) : !state.user.onboarded ? (
         <>
           <Stack.Screen name="Onboarding" component={OnboardingStack} />
         </>

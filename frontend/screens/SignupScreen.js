@@ -19,10 +19,10 @@ const SignupScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const auth = useAuth();
+  const { authContext } = useAuth();
 
   const handlePress = () => {
-    auth.signUp({ email, password, passwordConfirm });
+    authContext.signUp({ email, password, passwordConfirm });
   };
 
   return (

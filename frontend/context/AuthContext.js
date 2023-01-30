@@ -4,19 +4,9 @@ import * as SecureStore from "expo-secure-store";
 import { API_URLL as API_URL } from "@env";
 
 const AuthContext = React.createContext();
-const AuthState = React.createContext();
-const AuthDispatch = React.createContext();
 
 export const useAuth = () => {
   return useContext(AuthContext);
-};
-
-export const useAuthState = () => {
-  return useContext(AuthState);
-};
-
-export const useAuthDispatch = () => {
-  return useContext(AuthDispatch);
 };
 
 export const AuthProvider = ({ children }) => {
@@ -188,12 +178,8 @@ export const AuthProvider = ({ children }) => {
   );
 
   return (
-    <AuthContext.Provider value={authContext}>
-      <AuthState.Provider value={state}>
-        <AuthDispatch.Provider value={dispatch}>
-          {children}
-        </AuthDispatch.Provider>
-      </AuthState.Provider>
+    <AuthContext.Provider value={{ authContext, state, dispatch }}>
+      {children}
     </AuthContext.Provider>
   );
 };

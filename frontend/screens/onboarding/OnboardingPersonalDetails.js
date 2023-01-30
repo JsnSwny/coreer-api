@@ -13,17 +13,18 @@ import Header from "../../components/Header";
 import axios from "axios";
 import colors from "../../config/colors";
 import { useAuth } from "../../context/AuthContext";
-import { useAuthState } from "../../context/AuthContext";
 
 const OnboardingPersonalDetails = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const login = useAuth();
-  const state = useAuthState();
+  const { authContext, state } = useAuth();
 
   const handlePress = () => {
-    login.updateDetails(state, { first_name: firstName, last_name: lastName });
+    authContext.updateDetails(state, {
+      first_name: firstName,
+      last_name: lastName,
+    });
   };
 
   return (

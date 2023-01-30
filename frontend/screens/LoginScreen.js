@@ -19,11 +19,10 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const login = useAuth();
+  const { authContext } = useAuth();
 
   const handlePress = () => {
-    console.log(email, password);
-    login.signIn(email, password);
+    authContext.signIn(email, password);
   };
 
   return (

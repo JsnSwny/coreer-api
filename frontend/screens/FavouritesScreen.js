@@ -4,23 +4,23 @@ import { TextInput, View, Text } from "react-native";
 import UserCard from "../components/UserCard";
 import Header from "../components/Header";
 import globalStyles from "../config/globalStyles";
-import { useAuthState } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import Title from "../components/Title";
 import { API_URLL as API_URL } from "@env";
 
 const FavouritesScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
-  const authState = useAuthState();
+  const { state, dispatch } = useAuth();
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/user/?id__in=${authState.user.likes.toString()},`)
+      .get(`${API_URL}/api/user/?id__in=${state.user.likes.toString()},`)
       .then((res) => setResults(res.data))
       .catch((err) => {
         console.log(err.response);
         return;
       });
-  }, [authState]);
+  }, [state]);
 
   return (
     <>

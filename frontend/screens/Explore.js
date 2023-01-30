@@ -16,13 +16,12 @@ import Navigation from "../components/Navigation";
 import Title from "../components/Title";
 import UserCard from "../components/UserCard";
 import colors from "../config/colors";
-import { useAuthState } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { API_URLL as API_URL } from "@env";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   const [profiles, setProfiles] = useState([]);
-  const authState = useAuthState();
 
   const searchSubmit = () => {
     navigation.navigate("Search", { search: text });

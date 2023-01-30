@@ -12,13 +12,12 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons/faLocationDot";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { useAuth, useAuthState, useAuthDispatch } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { API_URL } from "@env";
 
 const UserCard = ({ user, navigation }) => {
-  const authState = useAuthState();
-  const authDispatch = useAuthDispatch();
+  const { state, dispatch } = useAuth();
 
   const likeUser = () => {
     const config = {
@@ -27,10 +26,10 @@ const UserCard = ({ user, navigation }) => {
       },
     };
 
-    config.headers["Authorization"] = `Token ${authState.userToken}`;
-    let newLikes = authState.user.likes;
+    config.headers["Authorization"] = `Token ${state.userToken}`;
+    let newLikes = state.user.likes;
 
-    if (authState.user.likes.includes(user.id)) {
+    if (state.user.likes.includes(user.id)) {
       newLikes = [...newLikes.filter((item) => item != user.id)];
     } else {
       newLikes.push(user.id);
@@ -38,14 +37,14 @@ const UserCard = ({ user, navigation }) => {
 
     axios
       .put(
-        `${API_URL}/api/profiles/${authState.user.id}/`,
+        `${API_URL}/api/profiles/${state.user.id}/`,
         {
           likes: newLikes,
         },
         config
       )
       .then((res) => {
-        authDispatch({
+        dispatch({
           type: "UPDATE_LIKES",
           likes: res.data.likes,
         });
@@ -89,7 +88,7 @@ const UserCard = ({ user, navigation }) => {
           <TouchableOpacity onPress={likeUser}>
             <FontAwesomeIcon
               color={
-                authState.user.likes.includes(user.id)
+                state.user.likes.includes(user.id)
                   ? colors.primary
                   : colors.black
               }
