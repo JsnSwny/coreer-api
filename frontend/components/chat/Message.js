@@ -1,4 +1,6 @@
 import { useContext } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import colors from "../../config/colors";
 import { AuthContext } from "../../context/AuthContext";
 import { useAuth } from "../../context/AuthContext";
 // import { MessageModel } from "../models/Message";
@@ -9,40 +11,56 @@ import { useAuth } from "../../context/AuthContext";
 
 export function Message({ message }) {
   const { state, dispatch } = useAuth();
-  console.log(state);
 
-  //   function formatMessageTimestamp(timestamp: string) {
-  //     const date = new Date(timestamp);
-  //     return date.toLocaleTimeString().slice(0, 5);
-  //   }
+  function formatMessageTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString().slice(0, 5);
+  }
+  console.log(message);
+  const isFromUser = state.user.id == message.from_user.id;
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      marginBottom: 16,
+      justifyContent: "center",
+      alignItems: isFromUser ? "flex-end" : "flex-start",
+      paddingHorizontal: 16,
+    },
+    message: {
+      maxWidth: "80%",
+      minWidth: 75,
+    },
+    content: {
+      backgroundColor: isFromUser ? colors.primary : "#fff",
+      borderWidth: 0.5,
+      borderColor: isFromUser ? "transparent" : colors.stroke,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 10,
+    },
+    contentText: {
+      color: isFromUser ? "#fff" : colors.black,
+      lineHeight: 20,
+    },
+    timestamp: {
+      color: colors.grey,
+      marginTop: 4,
+      marginLeft: 16,
+    },
+  });
 
   return (
-    <></>
-    // <li
-    //   className={classNames(
-    //     "mt-1 mb-1 flex",
-    //     user!.username === message.to_user.username ? "justify-start" : "justify-end"
-    //   )}
-    // >
-    //   <div
-    //     className={classNames(
-    //       "relative max-w-xl rounded-lg px-2 py-1 text-gray-700 shadow",
-    //       user!.username === message.to_user.username ? "" : "bg-gray-100"
-    //     )}
-    //   >
-    //     <div className="flex items-end">
-    //       <span className="block">{message.content}</span>
-    //       <span
-    //         className="ml-2"
-    //         style={{
-    //           fontSize: "0.6rem",
-    //           lineHeight: "1rem"
-    //         }}
-    //       >
-    //         {formatMessageTimestamp(message.timestamp)}
-    //       </span>
-    //     </div>
-    //   </div>
-    // </li>
+    <>
+      <View style={styles.container}>
+        <View style={styles.message}>
+          <View style={styles.content}>
+            <Text style={styles.contentText}>{message.content}</Text>
+          </View>
+          <Text style={styles.timestamp}>
+            {formatMessageTimestamp(message.timestamp)}
+          </Text>
+        </View>
+      </View>
+    </>
   );
 }

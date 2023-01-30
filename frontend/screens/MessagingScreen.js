@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Text,
   StatusBar,
@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import colors from "../config/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -19,6 +20,7 @@ import { Message } from "../components/chat/Message";
 const MessagingScreen = ({ navigation, route }) => {
   const { toUser } = route.params;
   const [message, setMessage] = useState("");
+  const scrollViewRef = useRef();
 
   const { state, dispatch } = useAuth();
   const userIds = [state.user.id, toUser.id].sort();
@@ -74,11 +76,21 @@ const MessagingScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Message {toUser.first_name}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <ScrollView style={{ flex: 1 }}>
-        {messageHistory.map((message) => (
-          <Message key={message.id} message={message.content} />
-        ))}
-      </ScrollView>
+      <KeyboardAvoidingView
+        style={{ flex: 1, paddingTop: 16, marginBottom: -16 }}
+      >
+        <ScrollView
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current.scrollToEnd({ animated: true })
+          }
+        >
+          {messageHistory.map((message) => (
+            <Message key={message.id} message={message} />
+          ))}
+        </ScrollView>
+      </KeyboardAvoidingView>
+
       <View
         style={{
           justifyContent: "center",
@@ -126,6 +138,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flex: 1,
     margin: 16,
+    borderWidth: 0.5,
+    borderColor: colors.stroke,
   },
   title: {
     color: "#fff",

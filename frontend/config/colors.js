@@ -6,4 +6,5 @@ export default {
   lightPrimary: "rgba(25, 149, 185, 0.1)",
   green: "#0E853E",
   lightGreen: "#C7FFDD",
+  messageTo: "#E8F5F8",
 };
