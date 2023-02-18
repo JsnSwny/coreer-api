@@ -27,7 +27,7 @@ const MessagingScreen = ({ navigation, route }) => {
   const roomName = `${userIds[0]}__${userIds[1]}`;
   const [messageHistory, setMessageHistory] = useState([]);
   const { readyState } = useWebSocket(
-    `ws://137.195.118.52:8000/ws/chat/${roomName}/`,
+    `ws://137.195.117.177:8000/ws/chat/${roomName}/`,
     {
       onMessage: (e) => {
         const data = JSON.parse(e.data);
@@ -54,7 +54,7 @@ const MessagingScreen = ({ navigation, route }) => {
   );
 
   const { sendJsonMessage } = useWebSocket(
-    `ws://137.195.118.52:8000/ws/chat/${roomName}/`
+    `ws://137.195.117.177:8000/ws/chat/${roomName}/`
   );
 
   const sendMessage = () => {
@@ -76,9 +76,7 @@ const MessagingScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Message {toUser.first_name}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <KeyboardAvoidingView
-        style={{ flex: 1, paddingTop: 16, marginBottom: -16 }}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }}>
         <ScrollView
           ref={scrollViewRef}
           onContentSizeChange={() =>
@@ -89,35 +87,35 @@ const MessagingScreen = ({ navigation, route }) => {
             <Message key={message.id} message={message} />
           ))}
         </ScrollView>
-      </KeyboardAvoidingView>
 
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "row",
-        }}
-      >
-        <TextInput
-          style={styles.input}
-          onChangeText={setMessage}
-          text={message}
-          value={message}
-          placeholder="Type here..."
-        />
-        {message.length > 0 && (
-          <TouchableWithoutFeedback onPress={sendMessage}>
-            <View>
-              <FontAwesomeIcon
-                icon={faPaperPlane}
-                style={{ marginRight: 16, zIndex: 100 }}
-                size={20}
-                color={colors.primary}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <TextInput
+            style={styles.input}
+            onChangeText={setMessage}
+            text={message}
+            value={message}
+            placeholder="Type here..."
+          />
+          {message.length > 0 && (
+            <TouchableWithoutFeedback onPress={sendMessage}>
+              <View>
+                <FontAwesomeIcon
+                  icon={faPaperPlane}
+                  style={{ marginRight: 16, zIndex: 100 }}
+                  size={20}
+                  color={colors.primary}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
+        </View>
+      </KeyboardAvoidingView>
     </React.Fragment>
   );
 };

@@ -8,6 +8,7 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     likes = models.ManyToManyField('self', blank=True)
+    bio = models.CharField(max_length=500)
 
 
     def __str__(self):

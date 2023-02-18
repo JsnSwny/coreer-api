@@ -28,14 +28,13 @@ export function Message({ message }) {
     },
     message: {
       maxWidth: "80%",
-      minWidth: 75,
     },
     content: {
       backgroundColor: isFromUser ? colors.primary : "#fff",
       borderWidth: 0.5,
       borderColor: isFromUser ? "transparent" : colors.stroke,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
       borderRadius: 10,
     },
     contentText: {
@@ -46,6 +45,7 @@ export function Message({ message }) {
       color: colors.grey,
       marginTop: 4,
       marginLeft: 16,
+      paddingRight: 8,
     },
   });
 

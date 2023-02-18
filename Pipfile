@@ -12,6 +12,7 @@ channels = "*"
 daphne = "*"
 channels-redis = "*"
 uuid = "*"
+chardet = "*"
 
 [dev-packages]
 
