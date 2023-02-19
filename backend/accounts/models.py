@@ -7,7 +7,6 @@ class CustomUser(AbstractUser):
     email = models.EmailField('email address', unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    likes = models.ManyToManyField('self', blank=True, related_name="user_likes")
     bio = models.CharField(max_length=500, default="")
     job = models.CharField(max_length=500, blank=True, null=True)
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -20,3 +19,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+class Follow(models.Model):
+    follower = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)
+    following = models.ForeignKey(CustomUser, related_name='following', on_delete=models.CASCADE)
+    followed_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.follower.id} -> {self.following.id}"

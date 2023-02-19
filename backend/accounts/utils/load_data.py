@@ -1,5 +1,5 @@
 import csv
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Follow
 import chardet
 import requests
 import random
@@ -51,10 +51,14 @@ def update_follows(csv_path):
     with open(csv_path, 'r') as f:
         reader = csv.reader(f)
         next(reader)  # skip header row
+        data = []
         for row in reader:
-            obj = CustomUser.objects.get(id=row[0])
-            likes = ast.literal_eval(row[1])
-            liked_users = CustomUser.objects.filter(pk__in=likes)
-            for i in liked_users:
-                obj.likes.add(i)
-            print(f"Added: {row[0]}")
+            user = CustomUser.objects.get(id=row[0])
+            find = Follow.objects.filter(follower=user)
+            if len(find) == 0:
+                likes = ast.literal_eval(row[1])[0:100]
+                liked_users = CustomUser.objects.filter(pk__in=likes)
+                for i in liked_users:
+                    Follow.objects.create(follower=user, following=i)
+                print(f"Added: {row[0]}")
+    

@@ -27,26 +27,27 @@ const UserCard = ({ user, navigation }) => {
     };
 
     config.headers["Authorization"] = `Token ${state.userToken}`;
-    let newLikes = state.user.likes;
+    let newLikes = state.user.following;
 
-    if (state.user.likes.includes(user.id)) {
+    if (state.user.following.includes(user.id)) {
       newLikes = [...newLikes.filter((item) => item != user.id)];
     } else {
       newLikes.push(user.id);
     }
 
     axios
-      .put(
-        `${API_URL}/api/profiles/${state.user.id}/`,
+      .post(
+        `${API_URL}/api/follow/`,
         {
-          likes: newLikes,
+          follower: state.user.id,
+          following: user.id,
         },
         config
       )
       .then((res) => {
         dispatch({
           type: "UPDATE_LIKES",
-          likes: res.data.likes,
+          likes: res.data.following,
         });
       })
 
@@ -71,12 +72,18 @@ const UserCard = ({ user, navigation }) => {
               uri: user.profile_photo,
             }}
           />
-          <View>
+          <View style={{ flex: 1 }}>
             <Text style={styles.name}>
               {user.first_name} {user.last_name}
             </Text>
             <Text style={styles.role}>{user.job}</Text>
-            <View style={{ flexDirection: "row", marginTop: 8 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: 8,
+                flex: 1,
+              }}
+            >
               <FontAwesomeIcon color={colors.grey} icon={faLocationDot} />
               <Text style={styles.location}>{user.location}</Text>
             </View>
@@ -89,7 +96,7 @@ const UserCard = ({ user, navigation }) => {
           <TouchableOpacity onPress={likeUser}>
             <FontAwesomeIcon
               color={
-                state.user.likes.includes(user.id)
+                state.user.following.includes(user.id)
                   ? colors.primary
                   : colors.black
               }
@@ -110,6 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.grey,
     marginLeft: 4,
+    flex: 1,
   },
   bio: {
     marginTop: 12,
@@ -128,6 +136,7 @@ const styles = StyleSheet.create({
   cardTop: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
   },
   horizontalLine: {
     borderBottomColor: colors.stroke,

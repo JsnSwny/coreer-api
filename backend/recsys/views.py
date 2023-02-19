@@ -8,11 +8,13 @@ def get_recommendations(request, user_id):
     # Call the collaborative filtering function to get recommended users
     print("Getting recommendations...")
     recommendations = get_top_n_recommendations(user_id, n=10)
+
     
     # Convert the list of recommended user IDs to a JSON response
     response_data = {
         'recommendations': UserSerializer(recommendations, many=True).data
     }
+
     return JsonResponse(response_data)
 
 

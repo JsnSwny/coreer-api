@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer
-from .models import CustomUser
+from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer
+from .models import CustomUser, Follow
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from django.contrib.auth import login
@@ -105,3 +105,10 @@ class ProfilesViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+    
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+
+    def get_queryset(self):
+        return Follow.objects.all()

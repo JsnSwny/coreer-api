@@ -14,7 +14,7 @@ const FavouritesScreen = ({ navigation }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/user/?id__in=${state.user.likes.toString()},`)
+      .get(`${API_URL}/api/user/?id__in=${state.user.following.toString()},`)
       .then((res) => setResults(res.data))
       .catch((err) => {
         console.log(err.response);

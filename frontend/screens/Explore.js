@@ -24,6 +24,9 @@ const Explore = ({ navigation }) => {
   const [profiles, setProfiles] = useState([]);
   const { state, dispatch } = useAuth();
 
+  console.log("USER");
+  console.log(state.user);
+
   const searchSubmit = () => {
     navigation.navigate("Search", { search: text });
   };
@@ -31,9 +34,13 @@ const Explore = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       axios
-        .get(`${API_URL}/recommend/content/${state.user.id}`)
+        .get(`${API_URL}/recommend/${state.user.id}`)
         .then((res) => {
-          console.log(res.data);
+          console.log(
+            res.data["recommendations"]
+              .slice(0, 50)
+              .map((item) => item.following)
+          );
           setProfiles(res.data["recommendations"].slice(0, 50));
         })
         .catch((err) => {

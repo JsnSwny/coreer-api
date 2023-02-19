@@ -1,25 +1,36 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Follow
 from django.contrib.auth import authenticate
+from django.http import JsonResponse, response
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = '__all__'
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
     onboarded = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
     class Meta:
         model = CustomUser
-        fields = ('id', 'onboarded', 'first_name', 'last_name', 'email', 'likes', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'onboarded', 'following', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
 
     def get_onboarded(self, obj):
         if obj.first_name and obj.first_name:
             return True
         return False
+    
+    def get_following(self, obj):
+        follows = Follow.objects.filter(follower=obj)
+        return list(follows.values_list("following", flat=True))
 
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
     onboarded = serializers.SerializerMethodField()
     class Meta:
         model = CustomUser
-        fields = ('id', 'onboarded', 'first_name', 'last_name', 'email', 'likes', 'password')
+        fields = ('id', 'onboarded', 'first_name', 'last_name', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def get_onboarded(self, obj):
@@ -50,4 +61,4 @@ class LoginSerializer(serializers.Serializer):
 class ProfilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'likes', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
