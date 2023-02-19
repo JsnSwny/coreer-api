@@ -82,6 +82,7 @@ const UserCard = ({ user, navigation }) => {
             </View>
           </View>
         </View>
+        <Text style={styles.bio}>{user.bio}</Text>
         <View style={styles.horizontalLine} />
         <View style={styles.cardBottom}>
           <Text style={styles.tag}>Professional</Text>
@@ -109,6 +110,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.grey,
     marginLeft: 4,
+  },
+  bio: {
+    marginTop: 12,
+    color: colors.grey,
   },
   profile: { width: 70, height: 70, marginRight: 16, borderRadius: 35 },
   card: {

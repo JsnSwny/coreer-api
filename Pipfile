@@ -13,6 +13,10 @@ daphne = "*"
 channels-redis = "*"
 uuid = "*"
 chardet = "*"
+scipy = "*"
+scikit-learn = "*"
+redis = "*"
+numpy = "*"
 
 [dev-packages]
 

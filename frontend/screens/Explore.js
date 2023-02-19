@@ -22,6 +22,7 @@ import { API_URLL as API_URL } from "@env";
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   const [profiles, setProfiles] = useState([]);
+  const { state, dispatch } = useAuth();
 
   const searchSubmit = () => {
     navigation.navigate("Search", { search: text });
@@ -29,15 +30,15 @@ const Explore = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log(`${API_URL}/api/profiles`);
       axios
-        .get(`${API_URL}/api/profiles`)
+        .get(`${API_URL}/recommend/${state.user.id}`)
         .then((res) => {
-          console.log("success");
-          setProfiles(res.data.slice(0, 50));
+          console.log(res.data);
+          setProfiles(res.data["recommendations"].slice(0, 50));
         })
         .catch((err) => {
           console.log("error");
+          console.log(err.response);
         });
     }, [])
   );
