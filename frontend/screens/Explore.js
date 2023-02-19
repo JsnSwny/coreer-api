@@ -9,6 +9,7 @@ import {
   Fragment,
   FlatList,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Header from "../components/Header";
@@ -24,12 +25,28 @@ const Explore = ({ navigation }) => {
   const [profiles, setProfiles] = useState([]);
   const { state, dispatch } = useAuth();
 
-  console.log("USER");
-  console.log(state.user);
-
   const searchSubmit = () => {
     navigation.navigate("Search", { search: text });
   };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    axios
+      .get(`${API_URL}/recommend/${state.user.id}`)
+      .then((res) => {
+        console.log(
+          res.data["recommendations"].slice(0, 50).map((item) => item.following)
+        );
+        setProfiles(res.data["recommendations"].slice(0, 50));
+        setRefreshing(false);
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err.response);
+      });
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,13 +64,17 @@ const Explore = ({ navigation }) => {
           console.log("error");
           console.log(err.response);
         });
-    }, [state.user])
+    }, [])
   );
 
   return (
     <React.Fragment>
       <Header title="coreer" />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View>
           <Title
             title="Explore"

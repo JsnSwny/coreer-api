@@ -73,7 +73,7 @@ def get_top_n_recommendations(user_id, n=10):
 
     user_objects = list(CustomUser.objects.all().order_by("id"))
     following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", flat=True)
-    if len(following_list) == 0:
+    if len(following_list) < 5:
         q_ids = list(CustomUser.objects.values_list('id', flat=True))
         r_ids = random.sample(q_ids, 10)
         return CustomUser.objects.filter(id__in=r_ids)
