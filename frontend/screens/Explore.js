@@ -31,7 +31,7 @@ const Explore = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       axios
-        .get(`${API_URL}/recommend/${state.user.id}`)
+        .get(`${API_URL}/recommend/content/${state.user.id}`)
         .then((res) => {
           console.log(res.data);
           setProfiles(res.data["recommendations"].slice(0, 50));
@@ -40,7 +40,7 @@ const Explore = ({ navigation }) => {
           console.log("error");
           console.log(err.response);
         });
-    }, [])
+    }, [state.user])
   );
 
   return (

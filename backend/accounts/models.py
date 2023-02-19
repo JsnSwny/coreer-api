@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     likes = models.ManyToManyField('self', blank=True, related_name="user_likes")
-    bio = models.CharField(max_length=500, blank=True, null=True)
+    bio = models.CharField(max_length=500, default="")
     job = models.CharField(max_length=500, blank=True, null=True)
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     lon = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)

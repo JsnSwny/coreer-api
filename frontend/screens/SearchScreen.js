@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { TextInput, View, Text } from "react-native";
+import { TextInput, View, Text, ScrollView } from "react-native";
 import UserCard from "../components/UserCard";
 import Header from "../components/Header";
 import globalStyles from "../config/globalStyles";
@@ -20,7 +20,7 @@ const SearchScreen = ({ route, navigation }) => {
     <>
       <Header backButton={true} title="Search" navigation={navigation} />
 
-      <View
+      <ScrollView
         style={{
           paddingHorizontal: 16,
           marginTop: 16,
@@ -44,22 +44,10 @@ const SearchScreen = ({ route, navigation }) => {
 
         {results.map((profile) => {
           return (
-            <UserCard
-              key={profile.id}
-              navigation={navigation}
-              user={{
-                id: profile.id,
-                first_name: profile.first_name,
-                last_name: profile.last_name,
-                currentRole: "Software Engineer at Google",
-                location: "Edinburgh, United Kingdom",
-                image:
-                  "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-              }}
-            />
+            <UserCard key={profile.id} navigation={navigation} user={profile} />
           );
         })}
-      </View>
+      </ScrollView>
     </>
   );
 };
