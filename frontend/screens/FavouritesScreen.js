@@ -31,11 +31,7 @@ const FavouritesScreen = ({ navigation }) => {
           subtitle={`You have ${results.length} favourites`}
         />
       </View>
-      <ScrollView
-        style={{
-          paddingHorizontal: 16,
-        }}
-      >
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
         {results.map((profile) => {
           return (
             <UserCard key={profile.id} navigation={navigation} user={profile} />

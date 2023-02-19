@@ -19,6 +19,7 @@ import UserCard from "../components/UserCard";
 import colors from "../config/colors";
 import { useAuth } from "../context/AuthContext";
 import { API_URLL as API_URL } from "@env";
+import globalStyles from "../config/globalStyles";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
@@ -74,6 +75,7 @@ const Explore = ({ navigation }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        contentContainerStyle={{ paddingHorizontal: 16 }}
       >
         <View>
           <Title
@@ -81,7 +83,7 @@ const Explore = ({ navigation }) => {
             subtitle="Search for an individual, career or industry"
           />
           <TextInput
-            style={styles.input}
+            style={[globalStyles.shadowProp, globalStyles.input]}
             onChangeText={onChangeText}
             value={text}
             placeholder="E.g., ‘Software Engineer’"
@@ -95,11 +97,7 @@ const Explore = ({ navigation }) => {
             subtitle="The top matches based on your preferences"
           />
         </View>
-        <View
-          style={{
-            paddingHorizontal: 16,
-          }}
-        >
+        <View>
           {profiles.map((profile) => {
             return (
               <UserCard
@@ -114,19 +112,5 @@ const Explore = ({ navigation }) => {
     </React.Fragment>
   );
 };
-
-const styles = StyleSheet.create({
-  input: {
-    backgroundColor: "#fff",
-    height: 45,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    color: colors.grey,
-    borderColor: colors.stroke,
-    fontSize: 14,
-  },
-});
 
 export default Explore;

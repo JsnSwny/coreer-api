@@ -15,6 +15,7 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { API_URL } from "@env";
+import globalStyles from "../config/globalStyles";
 
 const UserCard = ({ user, navigation }) => {
   const { state, dispatch } = useAuth();
@@ -64,7 +65,7 @@ const UserCard = ({ user, navigation }) => {
       style={{ marginBottom: 16 }}
       onPress={handlePress}
     >
-      <View style={styles.card}>
+      <View style={[styles.card, globalStyles.shadowProp]}>
         <View style={styles.cardTop}>
           <Image
             style={styles.profile}
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 10,
     borderColor: colors.stroke,
-    borderWidth: 1,
+    borderWidth: 0.5,
     backgroundColor: "#fff",
     padding: 16,
     flex: 0,
@@ -138,9 +139,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
+
   horizontalLine: {
     borderBottomColor: colors.stroke,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     marginVertical: 12,
   },
   cardBottom: {

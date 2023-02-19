@@ -6,7 +6,7 @@ import Account from "./screens/Account";
 import LoginScreen from "./screens/LoginScreen";
 import MessagingScreen from "./screens/MessagingScreen";
 import colors from "./config/colors";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -87,7 +87,11 @@ const OnboardingStack = () => {
 const StackNavigation = () => {
   const { state, dispatch } = useAuth();
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       {state.userToken == null ? (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -109,9 +113,17 @@ const StackNavigation = () => {
   );
 };
 
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "#FAFCFF",
+  },
+};
+
 export default function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <AuthProvider>
         <StackNavigation />
       </AuthProvider>
@@ -120,10 +132,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#FCFDFF",
-    minHeight: "100%",
-  },
   tabItem: {
     justifyContent: "center",
     alignItems: "center",

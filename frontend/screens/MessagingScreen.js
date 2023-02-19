@@ -76,7 +76,7 @@ const MessagingScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Message {toUser.first_name}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <KeyboardAvoidingView style={{ flex: 1 }}>
+      <KeyboardAvoidingView style={{ flex: 1, paddingTop: 16 }}>
         <ScrollView
           ref={scrollViewRef}
           onContentSizeChange={() =>
