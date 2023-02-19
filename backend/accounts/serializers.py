@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     onboarded = serializers.SerializerMethodField()
     class Meta:
         model = CustomUser
-        fields = ('id', 'onboarded', 'first_name', 'last_name', 'email', 'likes')
+        fields = ('id', 'onboarded', 'first_name', 'last_name', 'email', 'likes', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
 
     def get_onboarded(self, obj):
         if obj.first_name and obj.first_name:
@@ -50,4 +50,4 @@ class LoginSerializer(serializers.Serializer):
 class ProfilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'likes',)
+        fields = ('id', 'first_name', 'last_name', 'email', 'likes', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')

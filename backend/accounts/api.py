@@ -94,7 +94,7 @@ class ProfilesViewSet(viewsets.ModelViewSet):
     serializer_class = ProfilesSerializer
 
     def get_queryset(self):
-        return CustomUser.objects.all()
+        return CustomUser.objects.all()[:50]
 
     def get_object(self):
         obj = get_object_or_404(CustomUser.objects.filter(id=self.kwargs["pk"]))

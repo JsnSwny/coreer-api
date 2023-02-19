@@ -12,7 +12,7 @@ const ProfileBox = ({ user, navigation }) => {
         <Image
           style={styles.profileImage}
           source={{
-            uri: user.image,
+            uri: user.profile_photo,
           }}
         />
         <View style={styles.tag}>
@@ -22,11 +22,7 @@ const ProfileBox = ({ user, navigation }) => {
           <Text style={styles.name}>
             {user.first_name} {user.last_name}
           </Text>
-          <Text style={styles.description}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Montes,
-            venenatis, sit suspendisse ullamcorper lectus dui, dictumst quis.
-            Senectus donec duis nec sed morbi.
-          </Text>
+          <Text style={styles.description}>{user.bio}</Text>
           <Pressable style={styles.button} onPress={handlePress}>
             <Text style={styles.buttonText}>Message {user.name}</Text>
           </Pressable>

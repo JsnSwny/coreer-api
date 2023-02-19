@@ -68,14 +68,14 @@ const UserCard = ({ user, navigation }) => {
           <Image
             style={styles.profile}
             source={{
-              uri: user.image,
+              uri: user.profile_photo,
             }}
           />
           <View>
             <Text style={styles.name}>
               {user.first_name} {user.last_name}
             </Text>
-            <Text style={styles.role}>{user.currentRole}</Text>
+            <Text style={styles.role}>{user.job}</Text>
             <View style={{ flexDirection: "row", marginTop: 8 }}>
               <FontAwesomeIcon color={colors.grey} icon={faLocationDot} />
               <Text style={styles.location}>{user.location}</Text>
