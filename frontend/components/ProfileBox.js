@@ -1,6 +1,10 @@
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
 import { View, Pressable, StyleSheet, Image, Text, Button } from "react-native";
 import colors from "../config/colors";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
+import FollowUser from "./FollowUser";
 
 const ProfileBox = ({ user, navigation }) => {
   const handlePress = () => {
@@ -15,9 +19,10 @@ const ProfileBox = ({ user, navigation }) => {
             uri: user.profile_photo,
           }}
         />
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>72% Match</Text>
+        <View style={styles.follow}>
+          <FollowUser user={user} />
         </View>
+
         <View style={styles.profileContent}>
           <Text style={styles.name}>
             {user.first_name} {user.last_name}
@@ -45,7 +50,7 @@ const styles = StyleSheet.create({
   },
   profileBox: {
     width: "100%",
-    marginTop: 48,
+    marginTop: 40,
     backgroundColor: "#fff",
     borderRadius: 10,
     borderWidth: 1,
@@ -90,12 +95,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  tag: {
+  follow: {
     position: "absolute",
     right: 16,
     top: 16,
-    backgroundColor: colors.lightGreen,
-    borderRadius: 5,
   },
   tagText: {
     fontSize: 12,

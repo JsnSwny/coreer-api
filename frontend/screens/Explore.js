@@ -24,10 +24,12 @@ import { API_URLL as API_URL } from "@env";
 import globalStyles from "../config/globalStyles";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import Languages from "../components/explore/Languages";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
   const [profiles, setProfiles] = useState([]);
+  const [popularLanguages, setPopularLanguages] = useState([]);
   const { state, dispatch } = useAuth();
 
   const searchSubmit = () => {
@@ -42,7 +44,7 @@ const Explore = ({ navigation }) => {
       .get(`${API_URL}/recommend/${state.user.id}`)
       .then((res) => {
         console.log(
-          res.data["recommendations"].slice(0, 50).map((item) => item.following)
+          res.data["recommendations"].slice(0, 50).map((item) => item.languages)
         );
         setProfiles(res.data["recommendations"].slice(0, 50));
         setRefreshing(false);
@@ -53,24 +55,29 @@ const Explore = ({ navigation }) => {
       });
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      axios
-        .get(`${API_URL}/recommend/${state.user.id}`)
-        .then((res) => {
-          console.log(
-            res.data["recommendations"]
-              .slice(0, 50)
-              .map((item) => item.following)
-          );
-          setProfiles(res.data["recommendations"].slice(0, 50));
-        })
-        .catch((err) => {
-          console.log("error");
-          console.log(err.response);
-        });
-    }, [])
-  );
+  // useFocusEffect(React.useCallback(() => {}, []));
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/recommend/${state.user.id}`)
+      .then((res) => {
+        console.log(res.data["recommendations"].slice(0, 5));
+        setProfiles(res.data["recommendations"].slice(0, 50));
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err.response);
+      });
+    axios
+      .get(`${API_URL}/most-popular-languages/`)
+      .then((res) => {
+        setPopularLanguages(res.data["languages"]);
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err.response);
+      });
+  }, []);
 
   return (
     <React.Fragment>
@@ -102,53 +109,9 @@ const Explore = ({ navigation }) => {
         }
         // contentContainerStyle={{ paddingHorizontal: 16 }}
       >
-        <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
-          <Title
-            title="Popular languages"
-            // subtitle="The top matches based on your preferences"
-          />
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <View style={[styles.languageBox]}>
-              <View style={{ flex: 1 }}>
-                <Image
-                  style={styles.languageImage}
-                  source={require("../assets/python-logo.png")}
-                />
-              </View>
-
-              <Text style={styles.languageText}>Python</Text>
-            </View>
-            <View style={[styles.languageBox]}>
-              <View style={{ flex: 1 }}>
-                <Image
-                  style={styles.languageImage}
-                  source={require("../assets/js-logo.png")}
-                />
-              </View>
-
-              <Text style={styles.languageText}>JavaScript</Text>
-            </View>
-            <View style={[styles.languageBox]}>
-              <View style={{ flex: 1 }}>
-                <Image
-                  style={styles.languageImage}
-                  source={require("../assets/java-logo.png")}
-                />
-              </View>
-
-              <Text style={styles.languageText}>Java</Text>
-            </View>
-            <View style={[styles.languageBox]}>
-              <View style={{ flex: 1 }}>
-                <Image
-                  style={styles.languageImage}
-                  source={require("../assets/c-logo.png")}
-                />
-              </View>
-
-              <Text style={styles.languageText}>C</Text>
-            </View>
-          </ScrollView>
+        <View style={{ paddingHorizontal: 16 }}>
+          <Title title="Popular languages" />
+          <Languages languages={popularLanguages} />
         </View>
 
         <View style={{ paddingHorizontal: 16 }}>
@@ -189,28 +152,7 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  languageBox: {
-    backgroundColor: "white",
-    height: 100,
-    width: 120,
-    borderWidth: 1,
-    borderColor: colors.stroke,
-    marginRight: 8,
-    borderRadius: 15,
-    padding: 16,
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  languageImage: {
-    width: 40,
-    height: 40,
-  },
-  languageText: {
-    fontWeight: "bold",
-    marginTop: 12,
-    fontSize: 14,
+    borderColor: "transparent",
   },
 });
 

@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import CustomUser, Follow
+from .models import CustomUser, Follow, Language
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
+
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = '__all__'
 
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +17,10 @@ class FollowSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     onboarded = serializers.SerializerMethodField()
     following = serializers.SerializerMethodField()
+    languages = LanguageSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'onboarded', 'following', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'onboarded', 'following', 'languages', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
 
     def get_onboarded(self, obj):
         if obj.first_name and obj.first_name:
@@ -59,6 +65,7 @@ class LoginSerializer(serializers.Serializer):
 
 # Profile Serializer
 class ProfilesSerializer(serializers.ModelSerializer):
+    languages = LanguageSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'first_name', 'last_name', 'languages', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')

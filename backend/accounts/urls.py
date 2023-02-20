@@ -3,6 +3,7 @@ from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserView
 from knox import views as knox_views
 
 from rest_framework import routers
+from .views import get_popular_languages
 
 router = routers.DefaultRouter()
 router.register('profiles', ProfilesViewSet, 'profiles')
@@ -11,6 +12,7 @@ router.register('follow', FollowViewSet, 'follow')
 
 urlpatterns = [
     path('api/auth/', include('knox.urls')),
+    path('most-popular-languages/', get_popular_languages),
     path('api/auth/register', RegisterAPI.as_view()),
     path('api/auth/login', LoginAPI.as_view()),
     path('api/auth/user', UserAPI.as_view()),

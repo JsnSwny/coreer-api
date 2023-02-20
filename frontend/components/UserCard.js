@@ -12,7 +12,7 @@ import colors from "../config/colors";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons/faLocationDot";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { API_URL } from "@env";
@@ -21,43 +21,10 @@ import distanceInMiles from "../utils/distance";
 import { faBriefcase } from "@fortawesome/free-solid-svg-icons";
 import capitalise from "../utils/capitalise";
 
+import FollowUser from "./FollowUser";
+
 const UserCard = ({ user, navigation }) => {
-  const { state, dispatch } = useAuth();
-
-  const likeUser = () => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    config.headers["Authorization"] = `Token ${state.userToken}`;
-    let newLikes = state.user.following;
-
-    if (state.user.following.includes(user.id)) {
-      newLikes = [...newLikes.filter((item) => item != user.id)];
-    } else {
-      newLikes.push(user.id);
-    }
-
-    axios
-      .post(
-        `${API_URL}/api/follow/`,
-        {
-          follower: state.user.id,
-          following: user.id,
-        },
-        config
-      )
-      .then((res) => {
-        dispatch({
-          type: "UPDATE_LIKES",
-          likes: res.data.following,
-        });
-      })
-
-      .catch((err) => console.log("error"));
-  };
+  const { state } = useAuth();
 
   const handlePress = () => {
     navigation.navigate("Profile", { user });
@@ -110,28 +77,26 @@ const UserCard = ({ user, navigation }) => {
         <View style={styles.cardBottom}>
           <View>
             <Text style={{ fontSize: 12 }}>
-              <Text style={{ fontWeight: "bold" }}>19</Text> Students Helped
+              <Text style={{ fontWeight: "bold" }}>
+                {user.following.length}
+              </Text>{" "}
+              Connections
             </Text>
             <Text style={{ fontSize: 12 }}>
-              <Text style={{ fontWeight: "bold" }}>6</Text> Languages
+              <Text style={{ fontWeight: "bold" }}>
+                {user.languages.length}
+              </Text>{" "}
+              Languages
             </Text>
             <Text style={{ fontSize: 12 }}>
-              <Text style={{ fontWeight: "bold" }}>2</Text> Years Industry
-              Experience
+              <Text style={{ fontWeight: "bold" }}>
+                {Math.floor(Math.random() * 10)}
+              </Text>{" "}
+              Year(s) Industry Experience
             </Text>
           </View>
 
-          <TouchableOpacity onPress={likeUser}>
-            <FontAwesomeIcon
-              color={
-                state.user.following.includes(user.id)
-                  ? colors.primary
-                  : colors.black
-              }
-              icon={faStar}
-              size={24}
-            />
-          </TouchableOpacity>
+          <FollowUser user={user} />
         </View>
       </View>
     </TouchableOpacity>

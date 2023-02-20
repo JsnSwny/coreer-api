@@ -82,4 +82,15 @@ def update_follows(csv_path):
                 for i in liked_users:
                     Follow.objects.create(follower=user, following=i)
                 print(f"Added: {row[0]}")
-    
+
+def update_languages(csv_path):
+    with open(csv_path, 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # skip header row
+        data = []
+        for row in reader:
+            user = CustomUser.objects.get(id=row[0])
+            languages = ast.literal_eval(row[3])[0:100]
+            for i in languages:
+                user.add_language(i)
+            print(f"Added: {row[0]}")

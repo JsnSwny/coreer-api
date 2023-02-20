@@ -10,10 +10,10 @@ import colors from "../config/colors";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-const Header = ({ title, backButton, navigation }) => {
+const Header = ({ title, backButton, navigation, color = true }) => {
   return (
     <TouchableWithoutFeedback onPress={() => backButton && navigation.goBack()}>
-      <View style={styles.container}>
+      <View style={[styles.container, color && styles.containerColor]}>
         {backButton && (
           <FontAwesomeIcon
             icon={faArrowLeft}
@@ -28,12 +28,14 @@ const Header = ({ title, backButton, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.primary,
     paddingTop: StatusBar.currentHeight + 16,
     paddingBottom: 16,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
+  },
+  containerColor: {
+    backgroundColor: colors.primary,
   },
   title: {
     color: "#fff",
