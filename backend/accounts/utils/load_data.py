@@ -6,6 +6,7 @@ import random
 import math
 import ast
 
+from decimal import Decimal
 
 def fix_data(csv_path):
     with open(csv_path, 'rb') as csvfile:
@@ -46,6 +47,26 @@ def load_data_from_csv(csv_path):
 
     # # use Django's ORM to bulk insert the objects into the database
     CustomUser.objects.bulk_create(data)
+
+
+def update_data(csv_path):
+    count = 0
+    with open(csv_path, 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # skip header row
+        data = []
+        for row in reader:
+            # [["id", "following_list", "clean_input", "languages", "job", "bio", "lat", "lon"]]
+            user = CustomUser.objects.get(id=row[0])
+
+            try:
+                user.lat = Decimal(row[6])
+                user.lon = Decimal(row[7])
+            except:
+                print("Didn't work")
+
+            user.save()
+            print(f"Added: {row[0]}")
 
 def update_follows(csv_path):
     with open(csv_path, 'r') as f:

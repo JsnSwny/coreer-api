@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 import colors from "../config/colors";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -16,6 +17,9 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { API_URL } from "@env";
 import globalStyles from "../config/globalStyles";
+import distanceInMiles from "../utils/distance";
+import { faBriefcase } from "@fortawesome/free-solid-svg-icons";
+import capitalise from "../utils/capitalise";
 
 const UserCard = ({ user, navigation }) => {
   const { state, dispatch } = useAuth();
@@ -62,7 +66,7 @@ const UserCard = ({ user, navigation }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.5}
-      style={{ marginBottom: 16 }}
+      style={{ marginBottom: 6 }}
       onPress={handlePress}
     >
       <View style={[styles.card, globalStyles.shadowProp]}>
@@ -77,23 +81,46 @@ const UserCard = ({ user, navigation }) => {
             <Text style={styles.name}>
               {user.first_name} {user.last_name}
             </Text>
-            <Text style={styles.role}>{user.job}</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                marginTop: 8,
-                flex: 1,
-              }}
-            >
-              <FontAwesomeIcon color={colors.grey} icon={faLocationDot} />
-              <Text style={styles.location}>{user.location}</Text>
-            </View>
+            {user.job && (
+              <Text style={styles.role}>{capitalise(user.job)}</Text>
+            )}
+            {user.lat && (
+              <View style={styles.distance}>
+                <FontAwesomeIcon
+                  style={styles.distancePin}
+                  color={colors.grey}
+                  icon={faLocationDot}
+                  size={14}
+                />
+                <Text style={styles.distanceText}>
+                  {distanceInMiles(
+                    user.lat,
+                    user.lon,
+                    state.user.lat,
+                    state.user.lon
+                  )}{" "}
+                  miles away
+                </Text>
+              </View>
+            )}
           </View>
         </View>
-        <Text style={styles.bio}>{user.bio}</Text>
+        {/* <Text style={styles.bio}>{user.bio}</Text> */}
         <View style={styles.horizontalLine} />
         <View style={styles.cardBottom}>
-          <Text style={styles.tag}>Professional</Text>
+          <View>
+            <Text style={{ fontSize: 12 }}>
+              <Text style={{ fontWeight: "bold" }}>19</Text> Students Helped
+            </Text>
+            <Text style={{ fontSize: 12 }}>
+              <Text style={{ fontWeight: "bold" }}>6</Text> Languages
+            </Text>
+            <Text style={{ fontSize: 12 }}>
+              <Text style={{ fontWeight: "bold" }}>2</Text> Years Industry
+              Experience
+            </Text>
+          </View>
+
           <TouchableOpacity onPress={likeUser}>
             <FontAwesomeIcon
               color={
@@ -112,21 +139,32 @@ const UserCard = ({ user, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  name: { fontSize: 16, fontWeight: "bold" },
-  role: { fontSize: 14, color: colors.grey },
+  name: {
+    fontSize: 16,
+    fontWeight: "bold",
+    // textAlign: "center",
+  },
+  role: {
+    fontSize: 14,
+    color: colors.black,
+    // textAlign: "center",
+    marginTop: 2,
+  },
   location: {
     fontSize: 12,
     color: colors.grey,
-    marginLeft: 4,
     flex: 1,
   },
   bio: {
     marginTop: 12,
     color: colors.grey,
+    marginBottom: 4,
+    // textAlign: "center",
+    fontSize: 14,
   },
-  profile: { width: 70, height: 70, marginRight: 16, borderRadius: 35 },
+  profile: { width: 70, height: 70, borderRadius: 35, marginRight: 12 },
   card: {
-    borderRadius: 10,
+    borderRadius: 0,
     borderColor: colors.stroke,
     borderWidth: 0.5,
     backgroundColor: "#fff",
@@ -161,6 +199,20 @@ const styles = StyleSheet.create({
   icon: {
     width: 20,
     height: 20,
+  },
+  distance: {
+    fontWeight: "bold",
+    color: colors.grey,
+    fontSize: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  distancePin: {
+    marginRight: 6,
+  },
+  distanceText: {
+    color: colors.grey,
   },
 });
 
