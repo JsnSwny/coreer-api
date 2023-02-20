@@ -13,7 +13,8 @@ def similarities(user_id, weight=1):
     user_objects = list(CustomUser.objects.all().order_by("id"))
 
     # following_list = CustomUser.objects.get(id=user_id).likes.all().values_list("id", flat=True).reverse()
-    following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", flat=True).order_by("-followed_on")
+    following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", flat=True).order_by("-followed_on")[0:5]
+    print(following_list)
     
     vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
     user_bios = list(CustomUser.objects.values_list("bio", flat=True).order_by("id"))
@@ -97,6 +98,8 @@ def get_top_n_recommendations(user_id, n=10):
 
 
     sorted_scores = [i for i in sorted_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx][:10]
+
+    print(sorted_scores)
 
     cb_score = similarities(user_id)
     cb_sorted_scores = [i for i in cb_score if i[0] != id_dict[user_id] and i[0] not in following_list_idx][:10]

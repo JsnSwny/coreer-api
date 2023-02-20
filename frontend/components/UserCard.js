@@ -102,7 +102,7 @@ const UserCard = ({ user, navigation }) => {
                   : colors.black
               }
               icon={faStar}
-              size={20}
+              size={24}
             />
           </TouchableOpacity>
         </View>

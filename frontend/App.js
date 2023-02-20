@@ -19,6 +19,17 @@ import OnboardingIntro from "./screens/onboarding/OnboardingIntro";
 import OnboardingPersonalDetails from "./screens/onboarding/OnboardingPersonalDetails";
 import SearchScreen from "./screens/SearchScreen";
 import FavouritesScreen from "./screens/FavouritesScreen";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { faComment } from "@fortawesome/free-solid-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+
+// import { faHouseUser as farHome } from "@fortawesome/free-regular-svg-icons";
+// import { faComment as farComment } from "@fortawesome/free-regular-svg-icons";
+// import { faUser as farUser } from "@fortawesome/free-regular-svg-icons";
+// import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
+
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,7 +38,11 @@ const MyTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarStyle: {},
+        tabBarStyle: {
+          height: 60,
+          borderTopColor: colors.stroke,
+          borderTopWidth: 0.5,
+        },
         tabBarShowLabel: false,
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -36,19 +51,19 @@ const MyTabs = () => {
           let iconName;
 
           if (route.name === "Explore") {
-            iconName = focused ? "ios-home-sharp" : "ios-home-outline";
+            iconName = focused ? faHome : faHome;
           } else if (route.name === "Inbox") {
-            iconName = focused ? "chatbubble" : "chatbubble-outline";
+            iconName = focused ? faComment : faComment;
           } else if (route.name === "Account") {
-            iconName = focused ? "person" : "person-outline";
+            iconName = focused ? faUser : faUser;
           } else if (route.name === "Favourites") {
-            iconName = focused ? "star" : "star-outline";
+            iconName = focused ? faStar : faStar;
           }
 
           // You can return any component that you like here!
           return (
             <View style={styles.tabItem}>
-              <Icon name={iconName} size={size} color={color} />
+              <FontAwesomeIcon icon={iconName} size={size} color={color} />
               <Text style={[styles.tabText, focused && styles.tabTextActive]}>
                 {route.name}
               </Text>
@@ -56,7 +71,7 @@ const MyTabs = () => {
           );
         },
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.grey,
+        tabBarInactiveTintColor: colors.black,
       })}
     >
       <Tab.Screen name="Explore" component={Explore} />
@@ -138,6 +153,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 10,
+    marginTop: 4,
   },
   tabTextActive: {
     fontWeight: "bold",

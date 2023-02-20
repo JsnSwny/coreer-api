@@ -3,3 +3,4 @@
 *.log
 .nvm
 /frontend/package-lock.json
+node_modules
