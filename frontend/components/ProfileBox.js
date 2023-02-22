@@ -5,6 +5,8 @@ import colors from "../config/colors";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
 import FollowUser from "./FollowUser";
+import capitalise from "../utils/capitalise";
+import { faLocationPin } from "@fortawesome/free-solid-svg-icons";
 
 const ProfileBox = ({ user, navigation }) => {
   const handlePress = () => {
@@ -27,6 +29,24 @@ const ProfileBox = ({ user, navigation }) => {
           <Text style={styles.name}>
             {user.first_name} {user.last_name}
           </Text>
+          {user.job && <Text>{capitalise(user.job)}</Text>}
+          {user.location && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 4,
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faLocationPin}
+                style={{ marginRight: 4 }}
+                size={12}
+                color={colors.black}
+              />
+              <Text style={{ fontSize: 12 }}>{user.location}</Text>
+            </View>
+          )}
           <Text style={styles.description}>{user.bio}</Text>
           <Pressable style={styles.button} onPress={handlePress}>
             <Text style={styles.buttonText}>Message {user.name}</Text>
@@ -50,7 +70,7 @@ const styles = StyleSheet.create({
   },
   profileBox: {
     width: "100%",
-    marginTop: 40,
+    marginTop: 56,
     backgroundColor: "#fff",
     borderRadius: 10,
     borderWidth: 1,
@@ -77,7 +97,7 @@ const styles = StyleSheet.create({
   },
   description: {
     color: colors.grey,
-    marginTop: 4,
+    marginTop: 12,
     marginBottom: 24,
     fontSize: 14,
     lineHeight: 20,

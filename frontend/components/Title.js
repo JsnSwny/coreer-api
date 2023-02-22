@@ -13,7 +13,7 @@ const Title = ({ title, subtitle }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   title: {
     fontWeight: "bold",
