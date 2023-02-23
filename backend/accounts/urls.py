@@ -2,9 +2,9 @@ from django.urls import path, include
 from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowViewSet
 from knox import views as knox_views
 
-from rest_framework import routers
-from .views import get_popular_languages
 
+from .views import get_popular_languages
+from rest_framework import routers
 router = routers.DefaultRouter()
 router.register('profiles', ProfilesViewSet, 'profiles')
 router.register('user', UpdateUserViewSet, 'user')

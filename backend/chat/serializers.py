@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from chat.models import Message
+from chat.models import Message, Conversation
 from accounts.serializers import UserSerializer
+from django.contrib.auth import get_user_model
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    from_user = serializers.SerializerMethodField()
-    to_user = serializers.SerializerMethodField()
+    from_user = UserSerializer()
+    to_user = UserSerializer()
     conversation = serializers.SerializerMethodField()
 
     class Meta:
@@ -24,8 +25,27 @@ class MessageSerializer(serializers.ModelSerializer):
     def get_conversation(self, obj):
         return str(obj.conversation.id)
 
-    def get_from_user(self, obj):
-        return UserSerializer(obj.from_user).data
+User = get_user_model()
 
-    def get_to_user(self, obj):
-        return UserSerializer(obj.to_user).data
+
+class ConversationSerializer(serializers.ModelSerializer):
+    other_user = serializers.SerializerMethodField()
+    last_message = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Conversation
+        fields = ("id", "name", "other_user", "last_message")
+
+    def get_last_message(self, obj):
+        messages = obj.messages.all().order_by("-timestamp")
+        if not messages.exists():
+            return None
+        message = messages[0]
+        return MessageSerializer(message).data
+
+    def get_other_user(self, obj):
+        ids = obj.name.split("__")
+        for id in ids:
+            if int(id) != int(self.context["user"].id):
+                other_user = User.objects.get(id=id)
+                return UserSerializer(other_user).data

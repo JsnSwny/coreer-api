@@ -1,21 +1,29 @@
 import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../config/colors";
 
-const InboxItem = () => {
+const InboxItem = ({ conversation, navigation }) => {
+  const handlePress = () => {
+    navigation.navigate("Messaging", { toUser: conversation.other_user });
+  };
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={{
-          uri: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        }}
-      />
-      <View>
-        <Text style={styles.name}>Jason Sweeney</Text>
-        <Text style={styles.preview}>Justo, proin ornare urna habitant...</Text>
+    <TouchableOpacity onPress={handlePress}>
+      <View style={styles.container}>
+        {console.log(conversation.other_user)}
+        <Image
+          style={styles.image}
+          source={{
+            uri: `${conversation.other_user.profile_photo}`,
+          }}
+        />
+        <View>
+          <Text style={styles.name}>{conversation.other_user.first_name}</Text>
+          <Text style={styles.preview}>
+            {conversation.last_message.content}
+          </Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
