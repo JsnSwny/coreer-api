@@ -142,7 +142,6 @@ export default function App() {
       <AuthProvider>
         <StackNavigation />
       </AuthProvider>
-      <LandingPage />
     </NavigationContainer>
   );
 }
