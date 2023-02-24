@@ -16,7 +16,6 @@ export function Message({ message }) {
     const date = new Date(timestamp);
     return date.toLocaleTimeString().slice(0, 5);
   }
-  console.log(message);
   const isFromUser = state.user.id == message.from_user.id;
   const styles = StyleSheet.create({
     container: {

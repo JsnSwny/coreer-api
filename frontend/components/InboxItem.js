@@ -9,7 +9,6 @@ const InboxItem = ({ conversation, navigation }) => {
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.container}>
-        {console.log(conversation.other_user)}
         <Image
           style={styles.image}
           source={{

@@ -10,11 +10,7 @@ const Languages = ({ languages = [] }) => {
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {languages.map((language) => (
           <View style={[styles.languageBox]}>
-            {console.log(language)}
             <View style={{ flex: 1 }}>
-              {console.log(
-                `https://raw.githubusercontent.com/devicons/devicon/1119b9f84c0290e0f0b38982099a2bd027a48bf1/icons/${language.icon_name.toLowerCase()}/${language.icon_name.toLowerCase()}-original.svg`
-              )}
               <SvgUri
                 style={styles.languageImage}
                 uri={`https://raw.githubusercontent.com/devicons/devicon/1119b9f84c0290e0f0b38982099a2bd027a48bf1/icons/${language.icon_name.toLowerCase()}/${language.icon_name.toLowerCase()}-original.svg`}

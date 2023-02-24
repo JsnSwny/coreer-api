@@ -1,4 +1,5 @@
 from accounts.models import CustomUser, Follow
+from recsys.models import Recommendation
 from scipy.sparse import coo_matrix, csr_matrix
 from sklearn.metrics.pairwise import cosine_similarity
 import joblib
@@ -7,6 +8,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer#
 import random
 import time
+from datetime import datetime, timezone
 
 def similarities(user_id, id_dict, weight=1):    
     r = redis.Redis(host='localhost', port=6379, db=0)
@@ -37,8 +39,16 @@ def similarities(user_id, id_dict, weight=1):
         arr_list.append(weighted_sim)
 
     print(f"Following time: {time.time() - following_time}")
+    user_sim = sum(arr_list)
+
+    interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
+    for i in interactions:
+        diff = datetime.now(timezone.utc) - i[1]
+        days, seconds = diff.days, diff.seconds
+        
+        user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - (days * 0.1))
     
-    scores = enumerate(sum(arr_list))
+    scores = enumerate(user_sim)
     sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
     return sorted_scores
 
@@ -51,9 +61,7 @@ def build_user_similarity_matrix(user_id, id_dict):
         csr_matrix_indptr = np.frombuffer(r.get('csr_matrix_indptr'), dtype=np.int32)
         csr_matrix_shape = np.frombuffer(r.get('csr_matrix_shape'), dtype=np.int32)
         sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=tuple(csr_matrix_shape))
-        print(sparse_matrix.shape)
     else:
-        print("Not from redis")
         following = Follow.objects.values_list("follower__id", "following__id")
         
         row = []
@@ -65,14 +73,23 @@ def build_user_similarity_matrix(user_id, id_dict):
             col.append(id_dict[i[1]])
             data.append(1)
 
-        sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
+        sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_id), len(user_id)), dtype=np.int32)
 
         r.set('csr_matrix_data', sparse_matrix.data.tobytes())
         r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
         r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
         r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
 
+    
+
     user_sim = cosine_similarity(sparse_matrix, sparse_matrix[id_dict[user_id]])
+    interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
+    for i in interactions:
+        diff = datetime.now(timezone.utc) - i[1]
+        days, seconds = diff.days, diff.seconds
+        
+        user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - (days * 0.1))
+        
     return user_sim
 
 def get_top_n_recommendations(user_id, n=10):
@@ -117,17 +134,15 @@ def get_top_n_recommendations(user_id, n=10):
 
     cb_sorted_scores = [i for i in cb_score if i[0] != id_dict[user_id] and i[0] not in following_list_idx][:10]
 
+    print(cb_sorted_scores)
     scores = enumerate(user_sim)
     sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
     sorted_scores = [i for i in sorted_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx][:10]
 
-    # print(cb_sorted_scores)
-    # print(sorted_scores)
-
     combined = [user_objects[x[0]] for pair in zip(cb_sorted_scores, sorted_scores) for x in pair]
     print(f"Score sorting: {time.time() - matrix_time}")
 
-
+    
 
     print(f"Recommendations complete")
     print(f"Time taken: {time.time() - start}s")

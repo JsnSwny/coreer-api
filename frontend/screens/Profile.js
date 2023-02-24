@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View, Image, ScrollView, StyleSheet } from "react-native";
 import Header from "../components/Header";
 import ProfileBox from "../components/ProfileBox";
@@ -6,51 +6,29 @@ import colors from "../config/colors";
 import Languages from "../components/explore/Languages";
 import Title from "../components/Title";
 import globalStyles from "../config/globalStyles";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import { API_URL } from "@env";
 
 const Profile = ({ route, navigation }) => {
   const { user } = route.params;
-  console.log(user);
+  const { state } = useAuth();
+  useEffect(() => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    config.headers["Authorization"] = `Token ${state.userToken}`;
+    const data = { from_user: state.user.id, to_user: user.id };
+    axios.post(`${API_URL}/api/recommendations/`, data, config);
+  }, []);
   return (
     <React.Fragment>
       <View>
-        <Header
-          title={user.name}
-          backButton={true}
-          navigation={navigation}
-          // color={false}
-        />
+        <Header title={user.name} backButton={true} navigation={navigation} />
       </View>
-
-      {/* <View style={styles.headerCircle}> */}
-      {/* <View
-          style={{
-            backgroundColor: "black",
-            zIndex: 2,
-            width: "100%",
-            position: "absolute",
-            top: 0,
-            right: 0,
-            bottom: 0,
-            right: 0,
-            opacity: 0.4,
-            borderBottomLeftRadius: 60,
-            borderBottomRightRadius: 60,
-          }}
-        ></View> */}
-      {/* <Image
-          style={{
-            width: "100%",
-            height: 225,
-            zIndex: -5,
-            resizeMode: "cover",
-            borderBottomLeftRadius: 60,
-            borderBottomRightRadius: 60,
-          }}
-          source={{
-            uri: "https://images.pexels.com/photos/6804610/pexels-photo-6804610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-          }}
-        /> */}
-      {/* </View> */}
       <ScrollView style={styles.container}>
         <ProfileBox navigation={navigation} user={user} />
         <View style={{ paddingVertical: 16 }}>

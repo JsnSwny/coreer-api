@@ -1,7 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from .views import get_recommendations, get_similarities
+from rest_framework import routers
+from .api import RecommendationViewSet
+
+router = routers.DefaultRouter()
+router.register("recommendations", RecommendationViewSet)
+
 
 urlpatterns = [
-    path('<int:user_id>/', get_recommendations, name='get_recommendations'),
-    path('content/<int:user_id>/', get_similarities, name='get_similarities'),
+    path('recommend/<int:user_id>/', get_recommendations, name='get_recommendations'),
+    path('api/', include(router.urls))
 ]
