@@ -6,18 +6,84 @@ from .models import CustomUser, Follow
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from django.contrib.auth import login
+import redis
+from scipy.sparse import csr_matrix
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
-        print("API")
-        print(request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        print(user)
+        r = redis.Redis(host='localhost', port=6379, db=0)
+
+        # if r.exists('csr_matrix_data'):
+        #     csr_matrix_data = np.frombuffer(r.get('csr_matrix_data'), dtype=np.int32)
+        #     csr_matrix_indices = np.frombuffer(r.get('csr_matrix_indices'), dtype=np.int32)
+        #     csr_matrix_indptr = np.frombuffer(r.get('csr_matrix_indptr'), dtype=np.int32)
+        #     csr_matrix_shape = np.frombuffer(r.get('csr_matrix_shape'), dtype=np.int32)
+        #     sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=tuple(csr_matrix_shape))
+        #     sparse_matrix_copy = sparse_matrix.copy()
+        #     num_users = sparse_matrix_copy.shape[0]
+        #     num_items = sparse_matrix_copy.shape[1]
+
+        #     new_row_data = np.zeros(num_items+1, dtype=np.int32)
+        #     new_row_indices = np.zeros(num_items+1, dtype=np.int32)
+        #     new_row_indptr = np.zeros(num_users + 1, dtype=np.int32)
+
+        #     csr_matrix_data = np.concatenate((sparse_matrix_copy.data, new_row_data))
+        #     csr_matrix_indices = np.concatenate((sparse_matrix_copy.indices, new_row_indices))
+
+        #     num_new_nonzero = np.count_nonzero(new_row_data)
+            
+        #     new_row_indptr = sparse_matrix_copy.indptr
+        #     new_row_indptr[-1] = sparse_matrix_copy.indptr[-1] + num_new_nonzero
+
+        #     csr_matrix_indptr = np.concatenate((new_row_indptr, sparse_matrix_copy.indptr[num_users:]))
+
+        #     sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=(num_users + 1, num_items), dtype=np.int32)
+            
+        #     r.set('csr_matrix_data', sparse_matrix.data.tobytes())
+        #     r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
+        #     r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
+        #     r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+
+        user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
+        id_dict = dict(zip(user_ids, range(len(user_ids))))
+        following = Follow.objects.values_list("follower__id", "following__id")
+
+        
+        row = []
+        col = []
+        data = []
+
+        for i in following:
+            row.append(id_dict[i[0]])
+            col.append(id_dict[i[1]])
+            data.append(1)
+
+        sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
+
+        r.set('csr_matrix_data', sparse_matrix.data.tobytes())
+        r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
+        r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
+        r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+
+        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
+        user_bios = list(CustomUser.objects.values_list("bio", flat=True).order_by("id"))
+        tfidf_matrix = vec.fit_transform(user_bios)
+
+        r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
+        r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
+        r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
+        r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
+
+        print("User created")
+
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]
@@ -109,6 +175,34 @@ class ProfilesViewSet(viewsets.ModelViewSet):
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("Follow created")
+        
+        response = super().create(request, *args, **kwargs)
+
+        r = redis.Redis(host='localhost', port=6379, db=0)
+   
+        csr_matrix_data = np.frombuffer(r.get('csr_matrix_data'), dtype=np.int32)
+        csr_matrix_indices = np.frombuffer(r.get('csr_matrix_indices'), dtype=np.int32)
+        csr_matrix_indptr = np.frombuffer(r.get('csr_matrix_indptr'), dtype=np.int32)
+        csr_matrix_shape = np.frombuffer(r.get('csr_matrix_shape'), dtype=np.int32)
+        sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=tuple(csr_matrix_shape))
+
+        user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
+        id_dict = dict(zip(user_ids, range(len(user_ids))))
+
+        sparse_matrix_copy = sparse_matrix.copy() 
+
+        sparse_matrix_copy[id_dict[response.data["follower"]], id_dict[response.data["following"]]] = 1 
+        
+        
+        r.set('csr_matrix_data', sparse_matrix_copy.data.tobytes())
+        r.set('csr_matrix_indices', sparse_matrix_copy.indices.tobytes())
+        r.set('csr_matrix_indptr', sparse_matrix_copy.indptr.tobytes())
+        r.set('csr_matrix_shape', np.array(sparse_matrix_copy.shape, dtype=np.int32).tobytes())
+        
+        return response
 
     def get_queryset(self):
         return Follow.objects.all()
