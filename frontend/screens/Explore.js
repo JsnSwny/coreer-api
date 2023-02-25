@@ -25,6 +25,7 @@ import globalStyles from "../config/globalStyles";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Languages from "../components/explore/Languages";
+import * as SplashScreen from "expo-splash-screen";
 
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
@@ -38,36 +39,27 @@ const Explore = ({ navigation }) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  const getRecommendations = () => {
     setRefreshing(true);
     axios
       .get(`${API_URL}/recommend/${state.user.id}`)
       .then((res) => {
-        console.log(
-          res.data["recommendations"].slice(0, 50).map((item) => item.languages)
-        );
         setProfiles(res.data["recommendations"].slice(0, 50));
         setRefreshing(false);
+        SplashScreen.hideAsync();
       })
       .catch((err) => {
         console.log("error");
         console.log(err.response);
       });
+  };
+
+  const onRefresh = React.useCallback(() => {
+    getRecommendations();
   }, []);
 
-  // useFocusEffect(React.useCallback(() => {}, []));
-
   useEffect(() => {
-    axios
-      .get(`${API_URL}/recommend/${state.user.id}`)
-      .then((res) => {
-        console.log(res.data["recommendations"].slice(0, 5));
-        setProfiles(res.data["recommendations"].slice(0, 50));
-      })
-      .catch((err) => {
-        console.log("error");
-        console.log(err.response);
-      });
+    getRecommendations();
     axios
       .get(`${API_URL}/most-popular-languages/`)
       .then((res) => {
@@ -81,7 +73,6 @@ const Explore = ({ navigation }) => {
 
   return (
     <React.Fragment>
-      {/* <Header title="coreer" /> */}
       <View style={styles.banner}>
         <Text style={styles.bannerText}>Find a professional</Text>
         <View

@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer#
 import random
 import time
 from datetime import datetime, timezone
+import math
 
 def similarities(user_id, id_dict, weight=1):    
     r = redis.Redis(host='localhost', port=6379, db=0)
@@ -31,16 +32,17 @@ def similarities(user_id, id_dict, weight=1):
 
     following_time = time.time()
     arr_list = []
-    following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", flat=True).order_by("-followed_on")[0:5]
+    following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", "followed_on").order_by("-followed_on")[0:5]
     for user in following_list:
-        sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user]])
-        sim[id_dict[user]] = 0
-        weighted_sim = (1 * (sim*weight)) # + (0.25 * normed_dist[user])
+        sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user[0]]])
+        sim[id_dict[user[0]]] = 0
+        diff = datetime.now(timezone.utc) - user[1]
+        weight = math.exp(-0.05 * diff.days)
+        weighted_sim = (weight * sim)
         arr_list.append(weighted_sim)
 
     print(f"Following time: {time.time() - following_time}")
-    user_sim = sum(arr_list)
-
+    user_sim = sum(arr_list) / 5
     interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
     for i in interactions:
         diff = datetime.now(timezone.utc) - i[1]
@@ -86,10 +88,13 @@ def build_user_similarity_matrix(user_id, id_dict):
     interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
     for i in interactions:
         diff = datetime.now(timezone.utc) - i[1]
-        days, seconds = diff.days, diff.seconds
+        days = diff.days
+
+        print(user_sim[id_dict[i[0]]])
         
         user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - (days * 0.1))
-        
+        print(user_sim[id_dict[i[0]]])
+
     return user_sim
 
 def get_top_n_recommendations(user_id, n=10):

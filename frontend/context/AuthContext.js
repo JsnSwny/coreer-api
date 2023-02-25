@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { API_URLL as API_URL } from "@env";
+import * as SplashScreen from "expo-splash-screen";
 
 const AuthContext = React.createContext();
 
@@ -63,6 +64,7 @@ export const AuthProvider = ({ children }) => {
         userToken = await SecureStore.getItemAsync("userToken");
       } catch (e) {
         console.log(e.response);
+        SplashScreen.hideAsync();
         return;
       }
 
@@ -105,8 +107,6 @@ export const AuthProvider = ({ children }) => {
 
         // Request Body
         const body = JSON.stringify({ email, password });
-        console.log(`${API_URL}/api/auth/login`);
-        console.log(body);
         axios
           .post(`${API_URL}/api/auth/login`, body, config)
           .then((res) => {

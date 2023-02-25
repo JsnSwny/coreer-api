@@ -23,6 +23,7 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import * as SplashScreen from "expo-splash-screen";
 
 // import { faHouseUser as farHome } from "@fortawesome/free-regular-svg-icons";
 // import { faComment as farComment } from "@fortawesome/free-regular-svg-icons";
@@ -135,6 +136,12 @@ const MyTheme = {
     background: "#FAFCFF",
   },
 };
+
+SplashScreen.preventAutoHideAsync()
+  .then((result) =>
+    console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
+  )
+  .catch(console.warn);
 
 export default function App() {
   return (
