@@ -8,6 +8,12 @@ class Language(models.Model):
 
     def __str__(self):
         return f"{self.name} -> {self.icon_name}"
+    
+class Interest(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class CustomUser(AbstractUser):
@@ -22,6 +28,8 @@ class CustomUser(AbstractUser):
     location = models.CharField(max_length=500, blank=True, null=True)
     profile_photo = models.CharField(max_length=500, blank=True, null=True)
     languages = models.ManyToManyField(Language)
+    interests = models.ManyToManyField(Interest)
+    tfidf_input = models.CharField(max_length=1000, default="")
 
     def add_language(self, language_name):
         language, created = Language.objects.get_or_create(name=language_name)

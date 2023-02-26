@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Explore from "./screens/Explore";
 import Profile from "./screens/Profile";
@@ -10,13 +11,14 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/Ionicons";
-import React from "react";
+
 import * as SecureStore from "expo-secure-store";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 import SignupScreen from "./screens/SignupScreen";
 import OnboardingIntro from "./screens/onboarding/OnboardingIntro";
 import OnboardingPersonalDetails from "./screens/onboarding/OnboardingPersonalDetails";
+import OnboardingInterests from "./screens/onboarding/OnboardingInterests";
 import SearchScreen from "./screens/SearchScreen";
 import FavouritesScreen from "./screens/FavouritesScreen";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
@@ -24,6 +26,7 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 
 // import { faHouseUser as farHome } from "@fortawesome/free-regular-svg-icons";
 // import { faComment as farComment } from "@fortawesome/free-regular-svg-icons";
@@ -31,6 +34,7 @@ import * as SplashScreen from "expo-splash-screen";
 // import { faStar as farStar } from "@fortawesome/free-regular-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import OnboardingLanguages from "./screens/onboarding/OnboardingLanguages";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -90,12 +94,15 @@ const OnboardingStack = () => {
         headerShown: false,
         tabBarStyle: { display: "none" },
       })}
+      backBehavior="history"
     >
       {/* <Tab.Screen name="OnboardingIntro" component={OnboardingIntro} /> */}
       <Tab.Screen
         name="OnboardingPersonalDetails"
         component={OnboardingPersonalDetails}
       />
+      <Tab.Screen name="OnboardingInterests" component={OnboardingInterests} />
+      <Tab.Screen name="OnboardingLanguages" component={OnboardingLanguages} />
     </Tab.Navigator>
   );
 };
@@ -144,6 +151,15 @@ SplashScreen.preventAutoHideAsync()
   .catch(console.warn);
 
 export default function App() {
+  // const [loaded] = useFonts({
+  //   Raleway: require("./assets/fonts/Raleway-Regular.ttf"),
+  //   RalewayBold: require("./assets/fonts/Raleway-Bold.ttf"),
+  // });
+
+  // if (!loaded) {
+  //   return <Text>Loading</Text>;
+  // }
+
   return (
     <NavigationContainer theme={MyTheme}>
       <AuthProvider>

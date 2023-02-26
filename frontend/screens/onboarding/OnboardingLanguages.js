@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Text,
   Pressable,
@@ -17,17 +17,30 @@ import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../../config/globalStyles";
+import Interests from "../../components/onboarding/Interests";
+import { API_URL } from "@env";
 
-const OnboardingPersonalDetails = ({ navigation }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-
+const OnboardingLanguages = ({ navigation }) => {
   const { authContext, state } = useAuth();
+
+  const [languages, setLanguages] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/most-popular-languages/`)
+      .then((res) => {
+        setLanguages(res.data["languages"]);
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err.response);
+      });
+  }, []);
+
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
 
   const handlePress = () => {
     authContext.updateDetails(state, {
-      first_name: firstName,
-      last_name: lastName,
+      languages_id: selectedLanguages.map((item) => item.id),
     });
     navigation.navigate("OnboardingInterests");
   };
@@ -40,7 +53,7 @@ const OnboardingPersonalDetails = ({ navigation }) => {
         paddingHorizontal: 24,
       }}
     >
-      <Pressable onPress={() => authContext.signOut()}>
+      <Pressable onPress={() => navigation.navigate("OnboardingInterests")}>
         <FontAwesomeIcon
           icon={faArrowLeft}
           style={{ marginTop: 24 }}
@@ -50,18 +63,11 @@ const OnboardingPersonalDetails = ({ navigation }) => {
 
       <View style={styles.form}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.text}>Personal Details</Text>
-          <TextInput
-            onChangeText={setFirstName}
-            value={firstName}
-            placeholder="First name"
-            style={[styles.input, globalStyles.shadowProp]}
-          />
-          <TextInput
-            onChangeText={setLastName}
-            value={lastName}
-            placeholder="Last name"
-            style={[styles.input, globalStyles.shadowProp]}
+          <Text style={styles.text}>Languages</Text>
+          <Interests
+            items={languages}
+            selectedItems={selectedLanguages}
+            setSelectedItems={setSelectedLanguages}
           />
         </View>
 
@@ -126,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OnboardingPersonalDetails;
+export default OnboardingLanguages;

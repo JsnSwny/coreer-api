@@ -14,6 +14,8 @@ import axios from "axios";
 import colors from "../config/colors";
 import { useAuth } from "../context/AuthContext";
 import globalStyles from "../config/globalStyles";
+import { SvgUri } from "react-native-svg";
+import LoginVector from "../assets/LoginVector.svg";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -29,8 +31,9 @@ const LoginScreen = ({ navigation }) => {
     <SafeAreaView>
       <Header title="Coreer" />
       <View style={styles.image}>
-        <Image source={require("../assets/login-vector.png")} />
+        <LoginVector width={"100%"} />
       </View>
+
       <Text style={styles.text}>Login</Text>
       <View style={styles.form}>
         <TextInput

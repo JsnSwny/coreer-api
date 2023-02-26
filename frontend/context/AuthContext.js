@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         userToken = await SecureStore.getItemAsync("userToken");
+        console.log("Got key");
       } catch (e) {
         console.log(e.response);
         SplashScreen.hideAsync();
@@ -85,9 +86,11 @@ export const AuthProvider = ({ children }) => {
             token: userToken,
             user: res.data,
           });
+          SplashScreen.hideAsync();
         })
         .catch((err) => {
           console.log(err);
+          SplashScreen.hideAsync();
           return;
         });
     };
@@ -119,7 +122,7 @@ export const AuthProvider = ({ children }) => {
             });
           })
           .catch((err) => {
-            console.log(err);
+            console.log(err.response);
             return;
           });
       },
@@ -136,7 +139,7 @@ export const AuthProvider = ({ children }) => {
         };
 
         config.headers["Authorization"] = `Token ${state.userToken}`;
-
+        console.log(data);
         axios
           .put(`${API_URL}/api/user/${state.user.id}/`, data, config)
           .then((res) => {
@@ -146,7 +149,7 @@ export const AuthProvider = ({ children }) => {
             });
           })
           .catch((err) => {
-            console.log(err);
+            console.log(err.response);
             return;
           });
       },

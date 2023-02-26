@@ -11,6 +11,28 @@ import time
 from datetime import datetime, timezone
 import math
 
+def base_recommend(user_id, id_dict):
+    vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
+    clean_input = []
+    users = CustomUser.objects.all()[0:10000]
+    for idx, i in enumerate(users):
+        user_input = ""
+        if i.bio:
+            print(i.bio)
+            user_input += i.bio
+        for language in i.languages.values_list('name', flat=True):
+            user_input += f" {language}"
+        # if len(i.interests.all()) > 0:
+        #     for interest in i.interests.all():
+        #         user_input += f" {interest.name}"
+        print(idx)
+        clean_input.append(user_input)
+        
+    tfidf_matrix = vec.fit_transform(clean_input)
+    
+
+
+
 def similarities(user_id, id_dict, weight=1):    
     r = redis.Redis(host='localhost', port=6379, db=0)
 
@@ -114,6 +136,7 @@ def get_top_n_recommendations(user_id, n=10):
     following_list = CustomUser.objects.get(id=user_id).followers.all().values_list("following__id", flat=True)
     
     if len(following_list) < 5:
+        base_recommend(user_id, id_dict)
         q_ids = list(CustomUser.objects.values_list('id', flat=True))
         r_ids = random.sample(q_ids, 10)
         return CustomUser.objects.filter(id__in=r_ids)

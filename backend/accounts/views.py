@@ -6,7 +6,7 @@ from django.db.models import Count
 
 @csrf_exempt
 def get_popular_languages(request):
-    most_common_languages = Language.objects.annotate(num_users=Count('customuser')).order_by('-num_users')[0:20]
+    most_common_languages = Language.objects.annotate(num_users=Count('customuser')).order_by('-num_users')[0:50]
     response_data = {
         'languages': LanguageSerializer(most_common_languages, many=True).data
     }

@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Follow, Language
+from .models import CustomUser, Follow, Language, Interest
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -13,7 +13,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('is_staff', 'is_active',)
 
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name', 'email', 'bio', 'job', 'lat', 'lon', 'location', 'profile_photo', 'password')}),
+        (None, {'fields': ('first_name', 'last_name', 'email', 'bio', 'languages', 'interests', 'job', 'lat', 'lon', 'location', 'profile_photo', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     add_fieldsets = (
@@ -27,3 +27,4 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Follow)
 admin.site.register(Language)
+admin.site.register(Interest)

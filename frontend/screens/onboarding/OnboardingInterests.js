@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Text,
   Pressable,
@@ -17,19 +17,34 @@ import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../../config/globalStyles";
+import Interests from "../../components/onboarding/Interests";
+import { API_URL } from "@env";
 
-const OnboardingPersonalDetails = ({ navigation }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-
+const OnboardingInterests = ({ navigation }) => {
   const { authContext, state } = useAuth();
 
+  const [interests, setInterest] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/interests`)
+      .then((res) => {
+        console.log(res.data);
+        setInterest(res.data);
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err.response);
+      });
+  }, []);
+
+  const [selectedInterests, setSelectedInterests] = useState([]);
+
   const handlePress = () => {
+    console.log(selectedInterests.map((item) => item.id));
     authContext.updateDetails(state, {
-      first_name: firstName,
-      last_name: lastName,
+      interests_id: selectedInterests.map((item) => item.id),
     });
-    navigation.navigate("OnboardingInterests");
+    navigation.navigate("OnboardingLanguages");
   };
 
   return (
@@ -40,7 +55,9 @@ const OnboardingPersonalDetails = ({ navigation }) => {
         paddingHorizontal: 24,
       }}
     >
-      <Pressable onPress={() => authContext.signOut()}>
+      <Pressable
+        onPress={() => navigation.navigate("OnboardingPersonalDetails")}
+      >
         <FontAwesomeIcon
           icon={faArrowLeft}
           style={{ marginTop: 24 }}
@@ -50,18 +67,11 @@ const OnboardingPersonalDetails = ({ navigation }) => {
 
       <View style={styles.form}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.text}>Personal Details</Text>
-          <TextInput
-            onChangeText={setFirstName}
-            value={firstName}
-            placeholder="First name"
-            style={[styles.input, globalStyles.shadowProp]}
-          />
-          <TextInput
-            onChangeText={setLastName}
-            value={lastName}
-            placeholder="Last name"
-            style={[styles.input, globalStyles.shadowProp]}
+          <Text style={styles.text}>Interests</Text>
+          <Interests
+            items={interests}
+            selectedItems={selectedInterests}
+            setSelectedItems={setSelectedInterests}
           />
         </View>
 
@@ -126,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OnboardingPersonalDetails;
+export default OnboardingInterests;
