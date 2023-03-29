@@ -94,3 +94,12 @@ def update_languages(csv_path):
             for i in languages:
                 user.add_language(i)
             print(f"Added: {row[0]}")
+
+def update_types():
+    users = CustomUser.objects.all()
+    for user in users:
+        user.type = CustomUser.PROFESSIONAL
+        if user.job:
+            if user.job.lower() == "student":
+                user.type = CustomUser.STUDENT             
+        user.save()

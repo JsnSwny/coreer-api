@@ -21,37 +21,6 @@ class RegisterAPI(generics.GenericAPIView):
         user = serializer.save()
         r = redis.Redis(host='localhost', port=6379, db=0)
 
-        # if r.exists('csr_matrix_data'):
-        #     csr_matrix_data = np.frombuffer(r.get('csr_matrix_data'), dtype=np.int32)
-        #     csr_matrix_indices = np.frombuffer(r.get('csr_matrix_indices'), dtype=np.int32)
-        #     csr_matrix_indptr = np.frombuffer(r.get('csr_matrix_indptr'), dtype=np.int32)
-        #     csr_matrix_shape = np.frombuffer(r.get('csr_matrix_shape'), dtype=np.int32)
-        #     sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=tuple(csr_matrix_shape))
-        #     sparse_matrix_copy = sparse_matrix.copy()
-        #     num_users = sparse_matrix_copy.shape[0]
-        #     num_items = sparse_matrix_copy.shape[1]
-
-        #     new_row_data = np.zeros(num_items+1, dtype=np.int32)
-        #     new_row_indices = np.zeros(num_items+1, dtype=np.int32)
-        #     new_row_indptr = np.zeros(num_users + 1, dtype=np.int32)
-
-        #     csr_matrix_data = np.concatenate((sparse_matrix_copy.data, new_row_data))
-        #     csr_matrix_indices = np.concatenate((sparse_matrix_copy.indices, new_row_indices))
-
-        #     num_new_nonzero = np.count_nonzero(new_row_data)
-            
-        #     new_row_indptr = sparse_matrix_copy.indptr
-        #     new_row_indptr[-1] = sparse_matrix_copy.indptr[-1] + num_new_nonzero
-
-        #     csr_matrix_indptr = np.concatenate((new_row_indptr, sparse_matrix_copy.indptr[num_users:]))
-
-        #     sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=(num_users + 1, num_items), dtype=np.int32)
-            
-        #     r.set('csr_matrix_data', sparse_matrix.data.tobytes())
-        #     r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
-        #     r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
-        #     r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
-
         user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
         id_dict = dict(zip(user_ids, range(len(user_ids))))
         following = Follow.objects.values_list("follower__id", "following__id")
@@ -74,15 +43,13 @@ class RegisterAPI(generics.GenericAPIView):
         r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
 
         vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
-        user_bios = list(CustomUser.objects.values_list("bio", flat=True).order_by("id"))
+        user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
         tfidf_matrix = vec.fit_transform(user_bios)
 
         r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
         r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
         r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
         r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
-
-        print("User created")
 
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
@@ -151,6 +118,53 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        user = request.user
+        clean_input = ""
+        if user.bio:
+            clean_input += user.bio
+        if len(user.languages.all()) > 0:
+            for language in user.languages.all():
+                clean_input += f" {language.name}"
+        if len(user.interests.all()) > 0:
+            for interest in user.interests.all():
+                clean_input += f" {interest.name}"
+
+        user.tfidf_input = clean_input
+        user.save()
+
+        r = redis.Redis(host='localhost', port=6379, db=0)
+
+        user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
+        id_dict = dict(zip(user_ids, range(len(user_ids))))
+        following = Follow.objects.values_list("follower__id", "following__id")
+
+        
+        row = []
+        col = []
+        data = []
+
+        for i in following:
+            row.append(id_dict[i[0]])
+            col.append(id_dict[i[1]])
+            data.append(1)
+
+        sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
+
+        r.set('csr_matrix_data', sparse_matrix.data.tobytes())
+        r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
+        r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
+        r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+
+        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
+        user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
+        tfidf_matrix = vec.fit_transform(user_bios)
+
+        r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
+        r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
+        r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
+        r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
+
         return Response(serializer.data)
 
 # Get User API
@@ -160,7 +174,8 @@ class ProfilesViewSet(viewsets.ModelViewSet):
     serializer_class = ProfilesSerializer
 
     def get_queryset(self):
-        return CustomUser.objects.all()[:50]
+        print("Getting all users")
+        return CustomUser.objects.all()
 
     def get_object(self):
         obj = get_object_or_404(CustomUser.objects.filter(id=self.kwargs["pk"]))

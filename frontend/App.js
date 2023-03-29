@@ -150,6 +150,8 @@ SplashScreen.preventAutoHideAsync()
   )
   .catch(console.warn);
 
+import { LogBox } from "react-native";
+
 export default function App() {
   // const [loaded] = useFonts({
   //   Raleway: require("./assets/fonts/Raleway-Regular.ttf"),
@@ -160,6 +162,8 @@ export default function App() {
   //   return <Text>Loading</Text>;
   // }
 
+  //Ignore all log notifications
+  LogBox.ignoreAllLogs();
   return (
     <NavigationContainer theme={MyTheme}>
       <AuthProvider>

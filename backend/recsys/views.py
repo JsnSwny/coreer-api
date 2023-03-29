@@ -4,10 +4,10 @@ from .recommend import get_top_n_recommendations, similarities
 from accounts.serializers import UserSerializer
 
 @csrf_exempt
-def get_recommendations(request, user_id):
+def get_recommendations(request, user_id, n=10):
     # Call the collaborative filtering function to get recommended users
     print("Getting recommendations...")
-    recommendations = get_top_n_recommendations(user_id, n=10)
+    recommendations = get_top_n_recommendations(user_id, n)
 
     
     # Convert the list of recommended user IDs to a JSON response

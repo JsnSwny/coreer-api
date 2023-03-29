@@ -41,6 +41,7 @@ const OnboardingInterests = ({ navigation }) => {
 
   const handlePress = () => {
     console.log(selectedInterests.map((item) => item.id));
+
     authContext.updateDetails(state, {
       interests_id: selectedInterests.map((item) => item.id),
     });

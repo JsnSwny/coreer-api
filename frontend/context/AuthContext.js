@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-
+      SplashScreen.hideAsync();
       try {
         userToken = await SecureStore.getItemAsync("userToken");
         console.log("Got key");
@@ -139,7 +139,6 @@ export const AuthProvider = ({ children }) => {
         };
 
         config.headers["Authorization"] = `Token ${state.userToken}`;
-        console.log(data);
         axios
           .put(`${API_URL}/api/user/${state.user.id}/`, data, config)
           .then((res) => {

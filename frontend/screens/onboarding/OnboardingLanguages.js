@@ -42,7 +42,6 @@ const OnboardingLanguages = ({ navigation }) => {
     authContext.updateDetails(state, {
       languages_id: selectedLanguages.map((item) => item.id),
     });
-    navigation.navigate("OnboardingInterests");
   };
 
   return (
