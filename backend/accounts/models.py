@@ -55,6 +55,7 @@ class Follow(models.Model):
         return f"{self.follower.id} -> {self.following.id}"
     
 class Project(models.Model):
+    image = models.ImageField(upload_to='uploads/', blank=True)
     user = models.ForeignKey(CustomUser, related_name='projects', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     start_date = models.DateField()
