@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Follow, Language, Interest, Project
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
 
@@ -22,6 +22,17 @@ class ProjectSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)
     class Meta:
         model = Project
+        fields = '__all__'
+
+class SchoolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = School
+        fields = '__all__'
+
+class EducationSerializer(serializers.ModelSerializer):
+    school = SchoolSerializer(read_only=True)
+    class Meta:
+        model = Education
         fields = '__all__'
 
 # User Serializer
@@ -86,6 +97,7 @@ class LoginSerializer(serializers.Serializer):
 class ProfilesSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)
     projects = ProjectSerializer(read_only=True, many=True)
+    educations = EducationSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'languages', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'first_name', 'last_name', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')

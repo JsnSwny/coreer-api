@@ -14,6 +14,19 @@ class Interest(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+
+
+class School(models.Model):
+    logo = models.ImageField(upload_to="logos", blank=True, null=True)
+    name = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+
+    def __str__(self):
+        if self.logo:
+            return f"{self.id} {self.name} - Has Logo"
+        else:
+            return f"{self.id} {self.name}"
 
 
 class CustomUser(AbstractUser):
@@ -46,13 +59,12 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
     
-class Follow(models.Model):
-    follower = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)
-    following = models.ForeignKey(CustomUser, related_name='following', on_delete=models.CASCADE)
-    followed_on = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.follower.id} -> {self.following.id}"
+class Education(models.Model):
+    user = models.ForeignKey(CustomUser, related_name='educations', on_delete=models.CASCADE, null=True, blank=True)
+    school = models.ForeignKey(School, related_name='educations', on_delete=models.CASCADE, null=True, blank=True)
+    degree = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
     
 class Project(models.Model):
     image = models.ImageField(upload_to='uploads/', blank=True)
@@ -62,16 +74,16 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=255)
     languages = models.ManyToManyField(Language)
+    
+class Follow(models.Model):
+    follower = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)
+    following = models.ForeignKey(CustomUser, related_name='following', on_delete=models.CASCADE)
+    followed_on = models.DateTimeField(auto_now_add=True)
 
-class School(models.Model):
-    name = models.CharField(max_length=255)
-    country = models.CharField(max_length=255)
+    def __str__(self):
+        return f"{self.follower.id} -> {self.following.id}"
+    
 
-class Education(models.Model):
-    school = models.ManyToManyField(School)
-    degree = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
 
 
 

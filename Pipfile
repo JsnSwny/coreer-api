@@ -20,6 +20,7 @@ numpy = "*"
 django-storages = "*"
 boto3 = "*"
 pillow = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 
