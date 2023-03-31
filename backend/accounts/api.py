@@ -10,6 +10,9 @@ import redis
 from scipy.sparse import csr_matrix
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
@@ -90,29 +93,26 @@ class UserAPI(generics.RetrieveAPIView):
 #     def get_queryset(self):
 #         return self.request.user
 
-from rest_framework import filters
-# from django_filters import rest_framework as filters
-from django_filters.rest_framework import DjangoFilterBackend
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 
 class UpdateUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    pagination_class = CustomPagination
 
-    search_fields = ['first_name', 'last_name']
+    search_fields = ['first_name', 'last_name', 'job', 'location']
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = {
         'id': ["in", "exact"], # note the 'in' field
     }
-    
 
-    def get_queryset(self):
-        return CustomUser.objects.all()
-
-    def get_object(self):
-        obj = get_object_or_404(CustomUser.objects.filter(id=self.kwargs["pk"]))
-        return obj
 
     def update(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user, data=request.data, partial=True)

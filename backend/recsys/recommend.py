@@ -38,13 +38,13 @@ def base_recommend(r, user_id, id_dict, n):
     sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user_id]])
 
     print(f"Sim completed in {time.time() - start_time}s")
+    
 
-    # interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
-    # for i in interactions:
-    #     diff = datetime.now(timezone.utc) - i[1]
-    #     days, seconds = diff.days, diff.seconds
-        
-    #     sim[id_dict[i[0]]] = sim[id_dict[i[0]]] * (0.9 - (days * 0.1))
+    interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
+    for i in interactions:
+        diff = datetime.now(timezone.utc) - i[1]
+        days, seconds = diff.days, diff.seconds
+        sim[id_dict[i[0]]] *= (0.9 - abs(days * 0.1))
 
     scores = enumerate(sim)
     # sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
@@ -91,7 +91,7 @@ def similarities(r, user_id, id_dict, n, weight=1):
     for i in interactions:
         diff = datetime.now(timezone.utc) - i[1]
         days, seconds = diff.days, diff.seconds
-        user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - (days * 0.1))
+        user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - abs(days * 0.1))
 
     following_time = time.time()
     scores = enumerate(user_sim)
@@ -135,7 +135,7 @@ def build_user_similarity_matrix(r, user_id, user_ids, id_dict, n):
     for i in interactions:
         diff = datetime.now(timezone.utc) - i[1]
         days = diff.days  
-        user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - (days * 0.1))
+        user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - abs(days * 0.1))
 
     scores = enumerate(user_sim)
     scores = [(i, x) for i, x in scores if x > 0]

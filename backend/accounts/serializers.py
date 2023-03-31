@@ -78,6 +78,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = super().create(validated_data)
         user.set_password(password)
+        user.lat = 55.95
+        user.lon = 3.19
         user.save()
         return user
 
