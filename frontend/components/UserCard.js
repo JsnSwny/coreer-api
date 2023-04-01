@@ -23,7 +23,7 @@ import capitalise from "../utils/capitalise";
 
 import FollowUser from "./FollowUser";
 
-const UserCard = ({ user, navigation }) => {
+const UserCard = ({ user, navigation, getRecommendations }) => {
 	const { state } = useAuth();
 
 	const handlePress = () => {
@@ -90,7 +90,7 @@ const UserCard = ({ user, navigation }) => {
 						</Text>
 					</View>
 
-					<FollowUser user={user} />
+					<FollowUser user={user} getRecommendations={getRecommendations} />
 				</View>
 			</View>
 		</TouchableOpacity>

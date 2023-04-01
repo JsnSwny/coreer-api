@@ -58,8 +58,13 @@ const Explore = ({ navigation }) => {
 		getRecommendations();
 	}, []);
 
+	useFocusEffect(
+		React.useCallback(() => {
+			getRecommendations();
+		}, [])
+	);
+
 	useEffect(() => {
-		getRecommendations();
 		axios
 			.get(`${API_URL}/most-popular-languages/`)
 			.then((res) => {
@@ -118,6 +123,7 @@ const Explore = ({ navigation }) => {
 								key={profile.id}
 								navigation={navigation}
 								user={profile}
+								getRecommendations={getRecommendations}
 							/>
 						);
 					})}

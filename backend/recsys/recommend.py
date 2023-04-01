@@ -46,7 +46,9 @@ def base_recommend(r, user_id, id_dict, n):
         days, seconds = diff.days, diff.seconds
         sim[id_dict[i[0]]] *= (0.9 - abs(days * 0.1))
 
+    sim = sim[0:26034]
     scores = enumerate(sim)
+
     # sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
     sorted_scores = heapq.nlargest(n, scores, key=lambda x: x[1])
     print(f"Base completed in {time.time() - start_time}s")
@@ -79,6 +81,7 @@ def similarities(r, user_id, id_dict, n, weight=1):
     following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", "followed_on").order_by("-followed_on")[0:1]
     for user in following_list:
         sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user[0]]])
+        sim = sim[0:26034]
         sim[id_dict[user[0]]] = 0
         diff = datetime.now(timezone.utc) - user[1]
         weight = math.exp(-0.05 * diff.days)
@@ -136,7 +139,7 @@ def build_user_similarity_matrix(r, user_id, user_ids, id_dict, n):
         diff = datetime.now(timezone.utc) - i[1]
         days = diff.days  
         user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - abs(days * 0.1))
-
+    user_sim = user_sim[0:26034]
     scores = enumerate(user_sim)
     scores = [(i, x) for i, x in scores if x > 0]
     sorted_scores = heapq.nlargest(n, scores, key=lambda x: x[1])
@@ -185,8 +188,8 @@ def get_top_n_recommendations(user_id, n):
     matrix_time = time.time()
     
 
-    cb_sorted_scores = [i for i in cb_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx][:5]
-    cf_sorted_scores = [i for i in cf_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx][:5]
+    cb_sorted_scores = [i for i in cb_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx]
+    cf_sorted_scores = [i for i in cf_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx]
 
     combined_scores = cb_sorted_scores + cf_sorted_scores
     print(f"Score sorting: {time.time() - matrix_time}")
