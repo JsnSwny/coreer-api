@@ -106,7 +106,7 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = CustomPagination
 
-    search_fields = ['first_name', 'last_name', 'job', 'location']
+    search_fields = ['first_name', 'last_name', 'job', 'location', 'bio', 'languages__name']
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = {
@@ -119,17 +119,21 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        print("UPDATING USER")
+
         user = request.user
         clean_input = ""
         if user.bio:
             clean_input += user.bio
-        if len(user.languages.all()) > 0:
-            for language in user.languages.all():
-                clean_input += f" {language.name}"
+
         if len(user.interests.all()) > 0:
             for interest in user.interests.all():
-                clean_input += f" {interest.name}"
+                clean_input += f"{interest.name}"
 
+        if len(user.languages.all()) > 0:
+            for language in user.languages.all():
+                clean_input += f" [lang_{language.name}]"
+        
         user.tfidf_input = clean_input
         user.save()
 

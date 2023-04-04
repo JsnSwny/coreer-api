@@ -2,6 +2,9 @@ from rest_framework import serializers
 from .models import CustomUser, Follow, Language, Interest, Project, School, Education
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
+import geocoder
+from geopy.geocoders import Nominatim
+from functools import partial
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,8 +81,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = super().create(validated_data)
         user.set_password(password)
-        user.lat = 55.95
-        user.lon = 3.19
+        g = geocoder.ip('me')
+        geolocator = Nominatim(user_agent="coreer")
+
+        location = geolocator.reverse(f"{g.lat},{g.lng}", language="en")
+        user.lat = g.lat
+        user.lon = g.lng
+        print(location.raw["address"])
+        user.location = f"{location.raw['address']['city']}, {location.raw['address']['state']}, {location.raw['address']['country']}"
         user.save()
         return user
 

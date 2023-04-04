@@ -45,8 +45,6 @@ def base_recommend(r, user_id, id_dict, n):
         diff = datetime.now(timezone.utc) - i[1]
         days, seconds = diff.days, diff.seconds
         sim[id_dict[i[0]]] *= (0.9 - abs(days * 0.1))
-
-    sim = sim[0:26034]
     scores = enumerate(sim)
 
     # sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
@@ -81,7 +79,6 @@ def similarities(r, user_id, id_dict, n, weight=1):
     following_list = Follow.objects.filter(follower__id=user_id).values_list("following__id", "followed_on").order_by("-followed_on")[0:1]
     for user in following_list:
         sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user[0]]])
-        sim = sim[0:26034]
         sim[id_dict[user[0]]] = 0
         diff = datetime.now(timezone.utc) - user[1]
         weight = math.exp(-0.05 * diff.days)
@@ -133,19 +130,20 @@ def build_user_similarity_matrix(r, user_id, user_ids, id_dict, n):
 
     user_sim = cosine_similarity(sparse_matrix, sparse_matrix[id_dict[user_id]])
 
-    following_time = time.time()
+    
     interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
     for i in interactions:
         diff = datetime.now(timezone.utc) - i[1]
         days = diff.days  
         user_sim[id_dict[i[0]]] = user_sim[id_dict[i[0]]] * (0.9 - abs(days * 0.1))
-    user_sim = user_sim[0:26034]
+    following_time = time.time()
     scores = enumerate(user_sim)
     scores = [(i, x) for i, x in scores if x > 0]
     sorted_scores = heapq.nlargest(n, scores, key=lambda x: x[1])
+    print(f"Sort time = {time.time() - following_time}")
     return sorted_scores
 
-def get_top_n_recommendations(user_id, n):
+def get_top_n_recommendations(user_id, n, users_n=160000):
     r = redis.Redis(host='localhost', port=6379, db=0)
     # r.flushdb()
     # COLLABORATIVE FILTERING

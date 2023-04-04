@@ -21,6 +21,9 @@ django-storages = "*"
 boto3 = "*"
 pillow = "*"
 beautifulsoup4 = "*"
+geocoder = "*"
+geopy = "*"
+celery = "*"
 
 [dev-packages]
 
