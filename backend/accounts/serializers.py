@@ -81,14 +81,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = super().create(validated_data)
         user.set_password(password)
-        g = geocoder.ip('me')
-        geolocator = Nominatim(user_agent="coreer")
+        # g = geocoder.ip('me')
+        # geolocator = Nominatim(user_agent="coreer")
 
-        location = geolocator.reverse(f"{g.lat},{g.lng}", language="en")
-        user.lat = g.lat
-        user.lon = g.lng
-        print(location.raw["address"])
-        user.location = f"{location.raw['address']['city']}, {location.raw['address']['state']}, {location.raw['address']['country']}"
+        # location = geolocator.reverse(f"{g.lat},{g.lng}", language="en")
+        user.lat = 55.953251
+        user.lon = -3.188267
+
+        user.location = f"City of Edinburgh, Scotland, United Kingdom"
         user.save()
         return user
 

@@ -24,7 +24,7 @@ def base_recommend(r, user_id, id_dict, n):
         tfidf_matrix_shape = np.frombuffer(r.get('tfidf_matrix_shape'), dtype=np.int32)
         tfidf_matrix = csr_matrix((tfidf_matrix_data, tfidf_matrix_indices, tfidf_matrix_indptr), shape=tuple(tfidf_matrix_shape))
     else:
-        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
+        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
         user_bios = list(CustomUser.objects.all().values_list("tfidf_input", flat=True).order_by("id"))
         tfidf_matrix = vec.fit_transform(user_bios)
 
@@ -36,6 +36,7 @@ def base_recommend(r, user_id, id_dict, n):
     print(f"Redis completed in {time.time() - start_time}s")
     # print(tfidf_matrix)
     sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user_id]])
+    print(sim)
 
     print(f"Sim completed in {time.time() - start_time}s")
     
@@ -53,7 +54,7 @@ def base_recommend(r, user_id, id_dict, n):
     return sorted_scores[0:20]
 
 
-def similarities(r, user_id, id_dict, n, weight=1):   
+def content_based_recommendations(r, user_id, id_dict, n, weight=1):   
     following_time = time.time() 
 
     if r.exists('tfidf_matrix_data'):
@@ -65,7 +66,7 @@ def similarities(r, user_id, id_dict, n, weight=1):
         tfidf_matrix = csr_matrix((tfidf_matrix_data, tfidf_matrix_indices, tfidf_matrix_indptr), shape=tuple(tfidf_matrix_shape))
         print(f"Redis time: {time.time() - following_time}")
     else:
-        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
+        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
         user_bios = list(CustomUser.objects.all().values_list("tfidf_input", flat=True).order_by("id"))
         tfidf_matrix = vec.fit_transform(user_bios)
 
@@ -174,7 +175,7 @@ def get_top_n_recommendations(user_id, n, users_n=160000):
     # CONTENT BASED FILTERING
     # -----------------------
     matrix_time = time.time()    
-    cb_scores = similarities(r, user_id, id_dict, n)
+    cb_scores = content_based_recommendations(r, user_id, id_dict, n)
     print(f"Content filtering: {time.time() - matrix_time}s")
 
     # COLLABORATIVE FILTERING

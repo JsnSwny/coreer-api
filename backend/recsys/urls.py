@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import get_recommendations, get_similarities
+from .views import get_recommendations
 from rest_framework import routers
 from .api import RecommendationViewSet
 

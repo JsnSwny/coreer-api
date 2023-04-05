@@ -5,7 +5,7 @@ from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, Re
 from .models import CustomUser, Follow, Interest
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login
 import redis
 from scipy.sparse import csr_matrix
 import numpy as np
@@ -22,6 +22,15 @@ class RegisterAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        authenticated_user = authenticate(request, email=email, password=password)
+
+        # Log in the user
+        login(request, authenticated_user)
+
         r = redis.Redis(host='localhost', port=6379, db=0)
 
         user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
@@ -45,7 +54,7 @@ class RegisterAPI(generics.GenericAPIView):
         r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
         r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
 
-        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
+        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
         user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
         tfidf_matrix = vec.fit_transform(user_bios)
 
@@ -119,55 +128,54 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        print("UPDATING USER")
-
         user = request.user
-        clean_input = ""
-        if user.bio:
-            clean_input += user.bio
-
-        if len(user.interests.all()) > 0:
-            for interest in user.interests.all():
-                clean_input += f"{interest.name}"
-
         if len(user.languages.all()) > 0:
-            for language in user.languages.all():
-                clean_input += f" [lang_{language.name}]"
-        
-        user.tfidf_input = clean_input
-        user.save()
+            clean_input = ""
+            if user.bio:
+                clean_input += user.bio
 
-        r = redis.Redis(host='localhost', port=6379, db=0)
+            if len(user.interests.all()) > 0:
+                for interest in user.interests.all():
+                    clean_input += f"{interest.name} "
 
-        user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
-        id_dict = dict(zip(user_ids, range(len(user_ids))))
-        following = Follow.objects.values_list("follower__id", "following__id")
+            if len(user.languages.all()) > 0:
+                for language in user.languages.all():
+                    clean_input += f"[lang_{language.name}] "
+            
+            user.tfidf_input = clean_input
+            user.save()
 
-        
-        row = []
-        col = []
-        data = []
+            r = redis.Redis(host='localhost', port=6379, db=0)
 
-        for i in following:
-            row.append(id_dict[i[0]])
-            col.append(id_dict[i[1]])
-            data.append(1)
+            user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
+            id_dict = dict(zip(user_ids, range(len(user_ids))))
+            following = Follow.objects.values_list("follower__id", "following__id")
 
-        sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
+            
+            row = []
+            col = []
+            data = []
 
-        r.set('csr_matrix_data', sparse_matrix.data.tobytes())
-        r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
-        r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
-        r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+            for i in following:
+                row.append(id_dict[i[0]])
+                col.append(id_dict[i[1]])
+                data.append(1)
 
-        vec = TfidfVectorizer(strip_accents="unicode", stop_words="english", min_df=3)
-        user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
-        tfidf_matrix = vec.fit_transform(user_bios)
+            sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
 
-        r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
-        r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
-        r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
-        r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
+            r.set('csr_matrix_data', sparse_matrix.data.tobytes())
+            r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
+            r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
+            r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+
+            vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
+            user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
+            tfidf_matrix = vec.fit_transform(user_bios)
+
+            r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
+            r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
+            r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
+            r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
 
         return Response(serializer.data)
 

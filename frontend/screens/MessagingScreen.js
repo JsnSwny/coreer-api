@@ -26,8 +26,8 @@ const MessagingScreen = ({ navigation, route }) => {
 	const userIds = [state.user.id, toUser.id].sort();
 	const roomName = `${userIds[0]}__${userIds[1]}`;
 	const [messageHistory, setMessageHistory] = useState([]);
-	const { readyState } = useWebSocket(
-		`ws://137.195.116.246:8000/ws/chat/${roomName}/`,
+	const { readyState, sendJsonMessage } = useWebSocket(
+		`ws://192.168.0.14:8000/ws/chat/${roomName}/`,
 		{
 			onMessage: (e) => {
 				const data = JSON.parse(e.data);
@@ -51,10 +51,6 @@ const MessagingScreen = ({ navigation, route }) => {
 				console.log("Disconnected!");
 			},
 		}
-	);
-
-	const { sendJsonMessage } = useWebSocket(
-		`ws://137.195.116.246:8000/ws/chat/${roomName}/`
 	);
 
 	const sendMessage = () => {

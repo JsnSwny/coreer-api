@@ -21,14 +21,18 @@ class ChatConsumer(JsonWebsocketConsumer):
         for id in userIds:
             print(id)
             print(self.user.id)
+            print(self)
             if id != self.user.id:
                 return User.objects.get(id=id)
 
     def connect(self):
         self.user = self.scope["user"]
         print("Connecting")
-        print(self.scope["user"])
+        print(self.scope)
+        print(self.scope['user'])
+        print("user")
         self.conversation_name = self.scope["url_route"]["kwargs"]["room_name"]
+        print(self.conversation_name)
         self.conversation, created = Conversation.objects.get_or_create(name=self.conversation_name)
 
         # Join room group
