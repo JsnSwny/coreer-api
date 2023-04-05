@@ -69,8 +69,17 @@ const OnboardingLanguages = ({ navigation }) => {
 					/>
 				</View>
 
-				<Pressable style={styles.button} onPress={handlePress}>
-					<Text style={styles.buttonText}>Continue</Text>
+				<Pressable
+					style={[
+						styles.button,
+						selectedLanguages.length < 5 && styles.buttonDisabled,
+					]}
+					onPress={handlePress}
+					disabled={selectedLanguages.length < 5}
+				>
+					<Text style={styles.buttonText}>
+						Continue ({selectedLanguages.length} / 5)
+					</Text>
 				</Pressable>
 			</View>
 		</SafeAreaView>
@@ -123,6 +132,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 32,
 		borderRadius: 100,
 		marginBottom: 24,
+	},
+	buttonDisabled: {
+		opacity: 0.5,
 	},
 	buttonText: {
 		color: "#fff",

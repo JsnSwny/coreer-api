@@ -30,6 +30,9 @@ const UserCard = ({ user, navigation, getRecommendations }) => {
 		navigation.navigate("Profile", { user });
 	};
 
+	const truncatedBio =
+		user.bio.length > 100 ? `${user.bio.substring(0, 100)}...` : user.bio;
+
 	return (
 		<TouchableOpacity
 			activeOpacity={0.5}
@@ -72,6 +75,7 @@ const UserCard = ({ user, navigation, getRecommendations }) => {
 						)}
 					</View>
 				</View>
+				{truncatedBio && <Text style={styles.bio}>{truncatedBio}</Text>}
 				{/* <Text style={styles.bio}>{user.bio}</Text> */}
 				<View style={styles.horizontalLine} />
 				<View style={styles.cardBottom}>
@@ -87,6 +91,10 @@ const UserCard = ({ user, navigation, getRecommendations }) => {
 								{user.languages.length}
 							</Text>{" "}
 							Languages
+						</Text>
+						<Text style={{ fontSize: 12 }}>
+							<Text style={{ fontWeight: "bold" }}>{user.projects.length}</Text>{" "}
+							Projects
 						</Text>
 					</View>
 
@@ -119,7 +127,7 @@ const styles = StyleSheet.create({
 		color: colors.grey,
 		marginBottom: 4,
 		// textAlign: "center",
-		fontSize: 14,
+		fontSize: 12,
 	},
 	profile: { width: 70, height: 70, borderRadius: 35, marginRight: 12 },
 	card: {

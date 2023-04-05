@@ -24,10 +24,19 @@ class CustomUserAdmin(UserAdmin):
     )
     ordering = ('email',)
 
+class ProjectAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["user"]
+
+class FollowAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["follower", "following"]
+
+class EducationAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["user"]
+
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Follow)
+admin.site.register(Follow, FollowAdmin)
 admin.site.register(Language)
 admin.site.register(Interest)
-admin.site.register(Project)
+admin.site.register(Project, ProjectAdmin)
 admin.site.register(School)
-admin.site.register(Education)
+admin.site.register(Education, EducationAdmin)

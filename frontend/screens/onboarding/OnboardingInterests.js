@@ -73,8 +73,17 @@ const OnboardingInterests = ({ navigation }) => {
 					/>
 				</View>
 
-				<Pressable style={styles.button} onPress={handlePress}>
-					<Text style={styles.buttonText}>Continue</Text>
+				<Pressable
+					style={[
+						styles.button,
+						selectedInterests.length < 5 && styles.buttonDisabled,
+					]}
+					onPress={handlePress}
+					disabled={selectedInterests.length < 5}
+				>
+					<Text style={styles.buttonText}>
+						Continue ({selectedInterests.length} / 5)
+					</Text>
 				</Pressable>
 			</View>
 		</SafeAreaView>
@@ -127,6 +136,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 32,
 		borderRadius: 100,
 		marginBottom: 24,
+	},
+	buttonDisabled: {
+		opacity: 0.5,
 	},
 	buttonText: {
 		color: "#fff",

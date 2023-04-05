@@ -58,13 +58,14 @@ const Explore = ({ navigation }) => {
 		getRecommendations();
 	}, []);
 
-	useFocusEffect(
-		React.useCallback(() => {
-			getRecommendations();
-		}, [])
-	);
+	// useFocusEffect(
+	// 	React.useCallback(() => {
+	// 		getRecommendations();
+	// 	}, [])
+	// );
 
 	useEffect(() => {
+		getRecommendations();
 		axios
 			.get(`${API_URL}/most-popular-languages/`)
 			.then((res) => {
@@ -107,7 +108,7 @@ const Explore = ({ navigation }) => {
 			>
 				<View style={{ paddingHorizontal: 16 }}>
 					<Title title="Popular languages" />
-					<Languages languages={popularLanguages} />
+					<Languages languages={popularLanguages} navigation={navigation} />
 				</View>
 
 				<View style={{ paddingHorizontal: 16 }}>

@@ -1,11 +1,11 @@
 import csv
-from accounts.models import CustomUser, Follow
+from accounts.models import CustomUser, Follow, Project
 import chardet
 import requests
 import random
 import math
 import ast
-import csv
+import json
 
 
 from decimal import Decimal
@@ -82,6 +82,20 @@ def update_bios():
             user.tfidf_input = row[9]
             user.save()
             print(f"Added: {idx}")
+
+def update_projects():
+    csv.field_size_limit(1000000)
+    with open('accounts/data/projects.json', 'r') as f:
+        data = json.load(f)
+        for idx, i in enumerate(data):
+            user = CustomUser.objects.get(id=i["id"])
+            for project in i['repo_list']:
+                obj = Project(user=user, title=project['full_name'], start_date=project['created_at'][:10], description=project['description'])
+                obj.save()
+
+            print(f"Added: {idx}")
+            
+        
 
 def update_locations():
     csv.field_size_limit(1000000)

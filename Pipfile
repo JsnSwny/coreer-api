@@ -24,6 +24,7 @@ beautifulsoup4 = "*"
 geocoder = "*"
 geopy = "*"
 celery = "*"
+django-select2 = "*"
 
 [dev-packages]
 

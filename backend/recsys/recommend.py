@@ -35,8 +35,8 @@ def base_recommend(r, user_id, id_dict, n):
 
     print(f"Redis completed in {time.time() - start_time}s")
     # print(tfidf_matrix)
-    sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user_id]])
-    print(sim)
+    sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user_id]])[0:168105]
+
 
     print(f"Sim completed in {time.time() - start_time}s")
     
@@ -87,6 +87,7 @@ def content_based_recommendations(r, user_id, id_dict, n, weight=1):
         arr_list.append(weighted_sim)
     following_time = time.time()
     user_sim = sum(arr_list) / 5
+    user_sim = user_sim[0:168105]
 
     interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
     for i in interactions:
@@ -129,7 +130,7 @@ def build_user_similarity_matrix(r, user_id, user_ids, id_dict, n):
 
     
 
-    user_sim = cosine_similarity(sparse_matrix, sparse_matrix[id_dict[user_id]])
+    user_sim = cosine_similarity(sparse_matrix, sparse_matrix[id_dict[user_id]])[0:168105]
 
     
     interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")

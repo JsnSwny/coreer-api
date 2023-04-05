@@ -96,8 +96,8 @@ class Project(models.Model):
     title = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    description = models.CharField(max_length=255)
-    languages = models.ManyToManyField(Language)
+    description = models.CharField(max_length=255, null=True, blank=True)
+    languages = models.ManyToManyField(Language, null=True, blank=True)
     
 class Follow(models.Model):
     follower = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)
