@@ -9,37 +9,34 @@ import Title from "../components/Title";
 import { API_URLL as API_URL } from "@env";
 
 const FavouritesScreen = ({ navigation }) => {
-  const [results, setResults] = useState([]);
-  const { state, dispatch } = useAuth();
+	const [results, setResults] = useState([]);
+	const { state, dispatch } = useAuth();
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/api/user/?id__in=${state.user.following.toString()},`)
-      .then((res) => setResults(res.data))
-      .catch((err) => {
-        console.log(err.response);
-        return;
-      });
-  }, [state]);
+	useEffect(() => {
+		axios
+			.get(`${API_URL}/api/user/?id__in=${state.user.following.toString()},`)
+			.then((res) => {
+				console.log(res);
+				setResults(res.data.results);
+			})
+			.catch((err) => {
+				console.log(err.response);
+				return;
+			});
+	}, [state]);
 
-  return (
-    <>
-      <Header title="coreer" />
-      <View>
-        <Title
-          title="Favourites"
-          subtitle={`You have ${results.length} favourites`}
-        />
-      </View>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
-        {results.map((profile) => {
-          return (
-            <UserCard key={profile.id} navigation={navigation} user={profile} />
-          );
-        })}
-      </ScrollView>
-    </>
-  );
+	return (
+		<>
+			<Header title={`Favourites (${results.length})`} />
+			<ScrollView contentContainerStyle={{ marginTop: 16 }}>
+				{results.map((profile) => {
+					return (
+						<UserCard key={profile.id} navigation={navigation} user={profile} />
+					);
+				})}
+			</ScrollView>
+		</>
+	);
 };
 
 export default FavouritesScreen;
