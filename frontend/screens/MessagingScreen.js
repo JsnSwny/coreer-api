@@ -27,15 +27,13 @@ const MessagingScreen = ({ navigation, route }) => {
 	const roomName = `${userIds[0]}__${userIds[1]}`;
 	const [messageHistory, setMessageHistory] = useState([]);
 	const { readyState, sendJsonMessage } = useWebSocket(
-		`ws://192.168.0.14:8000/ws/chat/${roomName}/`,
+		`ws://172.19.41.207:8000/ws/chat/${roomName}/`,
 		{
 			onMessage: (e) => {
 				const data = JSON.parse(e.data);
 				switch (data.type) {
 					case "chat_message_echo":
 						setMessageHistory((previous) => {
-							console.log("CHAT MESSAGE ECHO");
-							console.log([...previous, data.message]);
 							return [...previous, data.message];
 						});
 						break;

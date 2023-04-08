@@ -9,6 +9,7 @@ import {
 	Button,
 	Image,
 	StatusBar,
+	ActivityIndicator,
 } from "react-native";
 import Header from "../../components/Header";
 import axios from "axios";
@@ -24,6 +25,8 @@ const OnboardingLanguages = ({ navigation }) => {
 	const { authContext, state } = useAuth();
 
 	const [languages, setLanguages] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+
 	useEffect(() => {
 		axios
 			.get(`${API_URL}/most-popular-languages/`)
@@ -38,6 +41,7 @@ const OnboardingLanguages = ({ navigation }) => {
 	const [selectedLanguages, setSelectedLanguages] = useState([]);
 
 	const handlePress = () => {
+		setIsLoading(true);
 		authContext.updateDetails(state, {
 			languages_id: selectedLanguages.map((item) => item.id),
 		});
@@ -72,14 +76,23 @@ const OnboardingLanguages = ({ navigation }) => {
 				<Pressable
 					style={[
 						styles.button,
-						selectedLanguages.length < 5 && styles.buttonDisabled,
+						(selectedLanguages.length < 2 || isLoading) &&
+							styles.buttonDisabled,
 					]}
 					onPress={handlePress}
-					disabled={selectedLanguages.length < 5}
+					disabled={selectedLanguages.length < 2 || isLoading}
 				>
 					<Text style={styles.buttonText}>
-						Continue ({selectedLanguages.length} / 5)
+						Continue ({selectedLanguages.length} / 2){" "}
 					</Text>
+					{isLoading && (
+						<ActivityIndicator
+							style={{ marginLeft: 8 }}
+							animating={isLoading}
+							size="small"
+							color="white"
+						/>
+					)}
 				</Pressable>
 			</View>
 		</SafeAreaView>
@@ -125,7 +138,7 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		backgroundColor: colors.primary,
-
+		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		paddingVertical: 16,

@@ -92,7 +92,7 @@ const Explore = ({ navigation }) => {
 					<TextInput
 						onChangeText={onChangeText}
 						value={text}
-						placeholder="Search professionals"
+						placeholder="Search (e.g., 'Glasgow web dev python')"
 						onSubmitEditing={searchSubmit}
 						clearButtonMode="while-editing"
 						style={{ flex: 1, paddingVertical: 12 }}

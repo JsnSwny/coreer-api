@@ -21,30 +21,49 @@ const FollowUser = ({ user, getRecommendations }) => {
 		config.headers["Authorization"] = `Token ${state.userToken}`;
 		let newLikes = state.user.following;
 
+		state.user.following.includes(user.id)
+			? axios
+					.delete(`${API_URL}/api/follow/`, {
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Token ${state.userToken}`,
+						},
+						data: { following_id: user.id },
+					})
+					.then((res) => {
+						dispatch({
+							type: "UPDATE_LIKES",
+							likes: res.data.following,
+						});
+						getRecommendations();
+					})
+
+					.catch((err) => console.log("error"))
+			: axios
+					.post(
+						`${API_URL}/api/follow/`,
+						{
+							following_id: user.id,
+						},
+						config
+					)
+					.then((res) => {
+						dispatch({
+							type: "UPDATE_LIKES",
+							likes: res.data.following,
+						});
+						getRecommendations();
+					})
+
+					.catch((err) => console.log("error"));
+
 		if (state.user.following.includes(user.id)) {
 			newLikes = [...newLikes.filter((item) => item != user.id)];
 		} else {
 			newLikes.push(user.id);
 		}
 
-		axios
-			.post(
-				`${API_URL}/api/follow/`,
-				{
-					follower: state.user.id,
-					following: user.id,
-				},
-				config
-			)
-			.then((res) => {
-				dispatch({
-					type: "UPDATE_LIKES",
-					likes: res.data.following,
-				});
-				getRecommendations();
-			})
-
-			.catch((err) => console.log("error"));
+		state.user.following = newLikes;
 	};
 	return (
 		<TouchableOpacity onPress={likeUser}>

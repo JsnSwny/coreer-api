@@ -40,150 +40,150 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const MyTabs = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarStyle: {
-          height: 60,
-          borderTopColor: colors.stroke,
-          borderTopWidth: 0.5,
-        },
-        tabBarShowLabel: false,
-        headerShown: false,
-        tabBarHideOnKeyboard: true,
+	return (
+		<Tab.Navigator
+			screenOptions={({ route }) => ({
+				tabBarStyle: {
+					height: 60,
+					borderTopColor: colors.stroke,
+					borderTopWidth: 0.5,
+				},
+				tabBarShowLabel: false,
+				headerShown: false,
+				tabBarHideOnKeyboard: true,
 
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+				tabBarIcon: ({ focused, color, size }) => {
+					let iconName;
 
-          if (route.name === "Explore") {
-            iconName = focused ? faHome : faHome;
-          } else if (route.name === "Inbox") {
-            iconName = focused ? faComment : faComment;
-          } else if (route.name === "Account") {
-            iconName = focused ? faUser : faUser;
-          } else if (route.name === "Favourites") {
-            iconName = focused ? faStar : faStar;
-          }
+					if (route.name === "Explore") {
+						iconName = focused ? faHome : faHome;
+					} else if (route.name === "Inbox") {
+						iconName = focused ? faComment : faComment;
+					} else if (route.name === "Account") {
+						iconName = focused ? faUser : faUser;
+					} else if (route.name === "Likes") {
+						iconName = focused ? faStar : faStar;
+					}
 
-          // You can return any component that you like here!
-          return (
-            <View style={styles.tabItem}>
-              <FontAwesomeIcon icon={iconName} size={size} color={color} />
-              <Text style={[styles.tabText, focused && styles.tabTextActive]}>
-                {route.name}
-              </Text>
-            </View>
-          );
-        },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.black,
-      })}
-    >
-      <Tab.Screen name="Explore" component={Explore} />
-      <Tab.Screen name="Inbox" component={Inbox} />
-      <Tab.Screen name="Favourites" component={FavouritesScreen} />
-      <Tab.Screen name="Account" component={Account} />
-    </Tab.Navigator>
-  );
+					// You can return any component that you like here!
+					return (
+						<View style={styles.tabItem}>
+							<FontAwesomeIcon icon={iconName} size={size} color={color} />
+							<Text style={[styles.tabText, focused && styles.tabTextActive]}>
+								{route.name}
+							</Text>
+						</View>
+					);
+				},
+				tabBarActiveTintColor: colors.primary,
+				tabBarInactiveTintColor: colors.black,
+			})}
+		>
+			<Tab.Screen name="Explore" component={Explore} />
+			<Tab.Screen name="Inbox" component={Inbox} />
+			<Tab.Screen name="Likes" component={FavouritesScreen} />
+			<Tab.Screen name="Account" component={Account} />
+		</Tab.Navigator>
+	);
 };
 
 const OnboardingStack = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: { display: "none" },
-      })}
-      backBehavior="history"
-    >
-      {/* <Tab.Screen name="OnboardingIntro" component={OnboardingIntro} /> */}
-      <Tab.Screen
-        name="OnboardingPersonalDetails"
-        component={OnboardingPersonalDetails}
-      />
-      <Tab.Screen name="OnboardingInterests" component={OnboardingInterests} />
-      <Tab.Screen name="OnboardingLanguages" component={OnboardingLanguages} />
-    </Tab.Navigator>
-  );
+	return (
+		<Tab.Navigator
+			screenOptions={({ route }) => ({
+				headerShown: false,
+				tabBarStyle: { display: "none" },
+			})}
+			backBehavior="history"
+		>
+			{/* <Tab.Screen name="OnboardingIntro" component={OnboardingIntro} /> */}
+			<Tab.Screen
+				name="OnboardingPersonalDetails"
+				component={OnboardingPersonalDetails}
+			/>
+			<Tab.Screen name="OnboardingInterests" component={OnboardingInterests} />
+			<Tab.Screen name="OnboardingLanguages" component={OnboardingLanguages} />
+		</Tab.Navigator>
+	);
 };
 
 const StackNavigation = () => {
-  const { state, dispatch } = useAuth();
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      {state.userToken == null ? (
-        <>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
-        </>
-      ) : !state.user.onboarded ? (
-        <>
-          <Stack.Screen name="Onboarding" component={OnboardingStack} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Home" component={MyTabs} />
-          <Stack.Screen name="Profile" component={Profile} />
-          <Stack.Screen name="Messaging" component={MessagingScreen} />
-          <Stack.Screen name="Search" component={SearchScreen} />
-        </>
-      )}
-    </Stack.Navigator>
-  );
+	const { state, dispatch } = useAuth();
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			{state.userToken == null ? (
+				<>
+					<Stack.Screen name="Login" component={LoginScreen} />
+					<Stack.Screen name="Signup" component={SignupScreen} />
+				</>
+			) : !state.user.onboarded ? (
+				<>
+					<Stack.Screen name="Onboarding" component={OnboardingStack} />
+				</>
+			) : (
+				<>
+					<Stack.Screen name="Home" component={MyTabs} />
+					<Stack.Screen name="Profile" component={Profile} />
+					<Stack.Screen name="Messaging" component={MessagingScreen} />
+					<Stack.Screen name="Search" component={SearchScreen} />
+				</>
+			)}
+		</Stack.Navigator>
+	);
 };
 
 const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "#FAFCFF",
-  },
+	...DefaultTheme,
+	colors: {
+		...DefaultTheme.colors,
+		background: "#FAFCFF",
+	},
 };
 
 SplashScreen.preventAutoHideAsync()
-  .then((result) =>
-    console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
-  )
-  .catch(console.warn);
+	.then((result) =>
+		console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
+	)
+	.catch(console.warn);
 
 import { LogBox } from "react-native";
 
 export default function App() {
-  // const [loaded] = useFonts({
-  //   Raleway: require("./assets/fonts/Raleway-Regular.ttf"),
-  //   RalewayBold: require("./assets/fonts/Raleway-Bold.ttf"),
-  // });
+	// const [loaded] = useFonts({
+	//   Raleway: require("./assets/fonts/Raleway-Regular.ttf"),
+	//   RalewayBold: require("./assets/fonts/Raleway-Bold.ttf"),
+	// });
 
-  // if (!loaded) {
-  //   return <Text>Loading</Text>;
-  // }
+	// if (!loaded) {
+	//   return <Text>Loading</Text>;
+	// }
 
-  //Ignore all log notifications
-  LogBox.ignoreAllLogs();
-  return (
-    <NavigationContainer theme={MyTheme}>
-      <AuthProvider>
-        <StackNavigation />
-      </AuthProvider>
-    </NavigationContainer>
-  );
+	//Ignore all log notifications
+	LogBox.ignoreAllLogs();
+	return (
+		<NavigationContainer theme={MyTheme}>
+			<AuthProvider>
+				<StackNavigation />
+			</AuthProvider>
+		</NavigationContainer>
+	);
 }
 
 const styles = StyleSheet.create({
-  tabItem: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  tabText: {
-    fontSize: 10,
-    marginTop: 4,
-  },
-  tabTextActive: {
-    fontWeight: "bold",
-    color: colors.primary,
-  },
+	tabItem: {
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	tabText: {
+		fontSize: 10,
+		marginTop: 4,
+	},
+	tabTextActive: {
+		fontWeight: "bold",
+		color: colors.primary,
+	},
 });

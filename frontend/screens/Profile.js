@@ -32,33 +32,41 @@ const Profile = ({ route, navigation }) => {
 			<ScrollView style={styles.container}>
 				<ProfileBox navigation={navigation} user={user} />
 				<View style={{ paddingVertical: 16 }}>
-					<Title title="Languages" />
-					<Languages languages={user.languages} />
+					{user.languages.length > 0 && (
+						<>
+							<Title title="Languages" />
+							<Languages languages={user.languages} navigation={navigation} />
+						</>
+					)}
 
-					<Title title="Projects" />
-					<View>
-						{user.projects.map((project) => (
-							<View style={[styles.project, globalStyles.shadowProp]}>
-								{project.image && (
-									<Image
-										style={styles.projectImage}
-										source={{
-											uri: "https://venngage-wordpress.s3.amazonaws.com/uploads/2020/08/Hopper-Landing-Page-Design.png",
-										}}
-									/>
-								)}
+					{user.projects.length > 0 && (
+						<>
+							<Title title="Projects" />
+							<View>
+								{user.projects.map((project) => (
+									<View style={[styles.project, globalStyles.shadowProp]}>
+										{project.image && (
+											<Image
+												style={styles.projectImage}
+												source={{
+													uri: "https://venngage-wordpress.s3.amazonaws.com/uploads/2020/08/Hopper-Landing-Page-Design.png",
+												}}
+											/>
+										)}
 
-								<View style={styles.projectContainer}>
-									<Text style={styles.projectTitle}>
-										{project.title.split("/").pop()}
-									</Text>
-									<Text style={styles.projectDescription}>
-										{project.description}
-									</Text>
-								</View>
+										<View style={styles.projectContainer}>
+											<Text style={styles.projectTitle}>
+												{project.title.split("/").pop()}
+											</Text>
+											<Text style={styles.projectDescription}>
+												{project.description}
+											</Text>
+										</View>
+									</View>
+								))}
 							</View>
-						))}
-					</View>
+						</>
+					)}
 				</View>
 			</ScrollView>
 		</React.Fragment>

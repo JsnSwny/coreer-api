@@ -8,6 +8,7 @@ import {
 	TextInput,
 	Button,
 	Image,
+	ActivityIndicator,
 } from "react-native";
 import Header from "../components/Header";
 import axios from "axios";
@@ -21,13 +22,16 @@ const SignupScreen = ({ navigation }) => {
 
 	const { authContext } = useAuth();
 
+	const [isLoading, setIsLoading] = useState(false);
+
 	const handlePress = () => {
+		setIsLoading(true);
 		authContext.signUp({ email, password, passwordConfirm });
 	};
 
 	return (
 		<SafeAreaView>
-			<Header title="Coreer" />
+			<Header title="coreer" />
 			<View style={styles.image}>
 				<Image source={require("../assets/login-vector.png")} />
 			</View>
@@ -56,12 +60,21 @@ const SignupScreen = ({ navigation }) => {
 				<Pressable
 					style={[
 						styles.button,
-						!(email && password && passwordConfirm) && styles.buttonDisabled,
+						(!(email && password && passwordConfirm) || isLoading) &&
+							styles.buttonDisabled,
 					]}
 					onPress={handlePress}
-					disabled={!(email && password && passwordConfirm)}
+					disabled={!(email && password && passwordConfirm) || isLoading}
 				>
 					<Text style={styles.buttonText}>Sign Up</Text>
+					{isLoading && (
+						<ActivityIndicator
+							style={{ marginLeft: 8 }}
+							animating={isLoading}
+							size="small"
+							color="white"
+						/>
+					)}
 				</Pressable>
 				<View style={styles.separator} />
 				<Text style={styles.navText}>
@@ -116,6 +129,7 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	button: {
+		flexDirection: "row",
 		backgroundColor: colors.primary,
 		borderRadius: 10,
 		alignItems: "center",

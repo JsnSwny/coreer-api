@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowViewSet, InterestViewSet
+from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowAPIView, InterestViewSet
 from knox import views as knox_views
 
 
@@ -8,7 +8,6 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register('profiles', ProfilesViewSet, 'profiles')
 router.register('user', UpdateUserViewSet, 'user')
-router.register('follow', FollowViewSet, 'follow')
 router.register('interests', InterestViewSet, 'interests')
 
 urlpatterns = [
@@ -18,5 +17,6 @@ urlpatterns = [
     path('api/auth/login', LoginAPI.as_view()),
     path('api/auth/user', UserAPI.as_view()),
     path('api/auth/logout', knox_views.LogoutView.as_view(), name='knox_logout'),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('api/follow/', FollowAPIView.as_view(), name='follow'),
 ]

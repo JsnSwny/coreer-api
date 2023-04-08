@@ -27,7 +27,7 @@ const FavouritesScreen = ({ navigation }) => {
 
 	return (
 		<>
-			<Header title={`Favourites (${results.length})`} />
+			<Header title={`Likes (${results.length})`} />
 			<ScrollView contentContainerStyle={{ marginTop: 16 }}>
 				{results.map((profile) => {
 					return (
