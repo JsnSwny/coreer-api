@@ -14,6 +14,7 @@ import Header from "../components/Header";
 import axios from "axios";
 import colors from "../config/colors";
 import { useAuth } from "../context/AuthContext";
+import LoginVector from "../assets/LoginVector.svg";
 
 const SignupScreen = ({ navigation }) => {
 	const [email, setEmail] = useState("");
@@ -33,7 +34,7 @@ const SignupScreen = ({ navigation }) => {
 		<SafeAreaView>
 			<Header title="coreer" />
 			<View style={styles.image}>
-				<Image source={require("../assets/login-vector.png")} />
+				<LoginVector width={"100%"} />
 			</View>
 			<Text style={styles.text}>Sign Up</Text>
 			<View style={styles.form}>

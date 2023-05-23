@@ -36,6 +36,7 @@ def base_recommend(r, user_id, id_dict, n):
     print(f"Redis completed in {time.time() - start_time}s")
     # print(tfidf_matrix)
     sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user_id]])[0:168105]
+    print(sim[0:100])
 
 
     print(f"Sim completed in {time.time() - start_time}s")
@@ -99,6 +100,7 @@ def content_based_recommendations(r, user_id, id_dict, n, weight=1):
     following_time = time.time()
     scores = enumerate(user_sim)
     following_time = time.time()
+    # sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
     sorted_scores = heapq.nlargest(n, scores, key=lambda x: x[1])
     
     return sorted_scores
@@ -143,7 +145,8 @@ def build_user_similarity_matrix(r, user_id, user_ids, id_dict, n):
     scores = enumerate(user_sim)
     scores = [(i, x) for i, x in scores if x > 0]
     sorted_scores = heapq.nlargest(n, scores, key=lambda x: x[1])
-    print(f"Sort time = {time.time() - following_time}")
+    # sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
+    # print(f"Sort time = {time.time() - following_time}")
     return sorted_scores
 
 def get_top_n_recommendations(user_id, n, users_n=160000):
@@ -152,7 +155,7 @@ def get_top_n_recommendations(user_id, n, users_n=160000):
     # COLLABORATIVE FILTERING
     # -----------------------
 
-
+    print(f"Getting {user_id}'s recommendations")
     user_objects = CustomUser.objects.all().order_by("id")
     user_ids = list(user_objects.values_list("id", flat=True))
     
@@ -177,15 +180,14 @@ def get_top_n_recommendations(user_id, n, users_n=160000):
     # CONTENT BASED FILTERING
     # -----------------------
     matrix_time = time.time()    
-    cb_scores = content_based_recommendations(r, user_id, id_dict, n)
+    cb_scores = content_based_recommendations(r, user_id, id_dict, n+20)
     print(f"Content filtering: {time.time() - matrix_time}s")
-
     print(cb_scores)
 
     # COLLABORATIVE FILTERING
     # -----------------------
     matrix_time = time.time()
-    cf_scores = build_user_similarity_matrix(r, user_id, user_ids, id_dict, n)
+    cf_scores = build_user_similarity_matrix(r, user_id, user_ids, id_dict, n+20)
     print(f"Collaborative filtering: {time.time() - matrix_time}s")
     print(cf_scores)
 
@@ -195,26 +197,36 @@ def get_top_n_recommendations(user_id, n, users_n=160000):
 
     cb_sorted_scores = [i for i in cb_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx]
     cf_sorted_scores = [i for i in cf_scores if i[0] != id_dict[user_id] and i[0] not in following_list_idx]
+
+    print(cb_sorted_scores)
+    print(cf_sorted_scores)
     
         # Take the top elements from each sorted list
     collab_top = cf_sorted_scores[:5]
     content_top = cb_sorted_scores[:5]
 
+    # combined_top = [x for pair in zip(collab_top, content_top) for x in pair]
+
     combined_top = collab_top + content_top
 
-    if len(combined_top) < 10:
-        remaining = 10 - len(combined_top)
-        if len(cf_sorted_scores) < 5:
-            content_remaining = cb_sorted_scores[5:5+remaining]
+    print("Combined Top:")
+    print(combined_top)
+
+    if len(combined_top) < n:
+        remaining = n - len(combined_top)
+        if len(cf_sorted_scores) < n:
+            content_remaining = cb_sorted_scores[n:n+remaining]
             combined_top += content_remaining
         else:
-            collab_remaining = cf_sorted_scores[5:5+remaining]
+            collab_remaining = cf_sorted_scores[n:n+remaining]
             combined_top += collab_remaining
     final_scores = sorted(combined_top, key=lambda x: x[1], reverse=True)
 
-    return [user_objects[i[0]] for i in final_scores]
+    print(f"Total time: {time.time() - start}")
 
-    # combined = [user_objects[x[0]] for pair in zip(cb_sorted_scores, cf_sorted_scores) for x in pair]
+    return [user_objects[i[0]] for i in final_scores][0:n]
+
+    
     
     # # print(sorted_scores)
-    # return combined
+    return combined

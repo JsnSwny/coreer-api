@@ -2,14 +2,19 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .recommend import get_top_n_recommendations
 from accounts.serializers import UserSerializer
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
+from knox.auth import TokenAuthentication
 
 @csrf_exempt
-def get_recommendations(request, user_id, n=10):
-    # Call the collaborative filtering function to get recommended users
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def get_recommendations(request, user_id=None, n=10):
+    print("GETTING RECOMMENDATIONS")
 
-    print("USER")
-    print(request.user)
-    print("Getting recommendations...")
+    if not user_id:
+        user_id = request.user.id
+
     recommendations = get_top_n_recommendations(user_id, n)
 
     

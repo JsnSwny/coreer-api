@@ -27,7 +27,7 @@ const MessagingScreen = ({ navigation, route }) => {
 	const roomName = `${userIds[0]}__${userIds[1]}`;
 	const [messageHistory, setMessageHistory] = useState([]);
 	const { readyState, sendJsonMessage } = useWebSocket(
-		`ws://172.19.41.207:8000/ws/chat/${roomName}/`,
+		`ws://192.168.0.14:8000/ws/chat/${roomName}/?token=${state.userToken}`,
 		{
 			onMessage: (e) => {
 				const data = JSON.parse(e.data);
@@ -44,6 +44,7 @@ const MessagingScreen = ({ navigation, route }) => {
 			},
 			onOpen: () => {
 				console.log("Connected!");
+				console.log(state.userToken);
 			},
 			onClose: () => {
 				console.log("Disconnected!");

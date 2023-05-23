@@ -60,6 +60,8 @@ class UserAPI(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
     def get_object(self):
+        print("GETTING USER")
+        print(self.request.user)
         return self.request.user
 
 # # Get User API
@@ -75,7 +77,7 @@ class UserAPI(generics.RetrieveAPIView):
 
 class CustomPagination(PageNumberPagination):
     page_size = 10
-    page_size_query_param = 'page_size'
+    page_size_query_param = 'perPage'
     max_page_size = 100
 
 
@@ -85,10 +87,9 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPagination
 
     search_fields = ['first_name', 'last_name', 'job', 'location', 'bio', 'languages__name']
-
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = {
-        'id': ["in", "exact"], # note the 'in' field
+        'id': ["in", "exact"]
     }
 
 
@@ -211,11 +212,20 @@ class InterestViewSet(viewsets.ModelViewSet):
         return Interest.objects.all()
     
 
-class FollowAPIView(generics.GenericAPIView):
-    serializer_class = UserSerializer
+class FollowAPIView(viewsets.ModelViewSet):
+    serializer_class = FollowSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['follower__id']
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['followed_on']
+
+    def get_queryset(self):
+        print("Get me some follows")
+        return Follow.objects.filter(follower=self.request.user)
+
+    def create(self, request, *args, **kwargs):
         following_id = request.data.get('following_id')
         print(f"POST: Following id is: {following_id}")
         if not following_id:
@@ -229,6 +239,33 @@ class FollowAPIView(generics.GenericAPIView):
 
         follow, created = Follow.objects.get_or_create(follower=request.user, following=following)
         r = redis.Redis(host='localhost', port=6379, db=0)
+
+        if r.exists('csr_matrix_data'):
+            print("Exists")
+        else:
+            user_objects = CustomUser.objects.all().order_by("id")
+            user_ids = list(user_objects.values_list("id", flat=True))
+            id_dict = dict(zip(user_ids, range(len(user_ids))))
+            
+            following = Follow.objects.all().values_list("follower__id", "following__id")
+            
+            row = []
+            col = []
+            data = []
+
+            for i in following:
+                row.append(id_dict[i[0]])
+                col.append(id_dict[i[1]])
+                data.append(1)
+
+            sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
+
+            r.set('csr_matrix_data', sparse_matrix.data.tobytes())
+            r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
+            r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
+            r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+
+            print("MATRIX DATA CREATED")
    
         csr_matrix_data = np.frombuffer(r.get('csr_matrix_data'), dtype=np.int32)
         csr_matrix_indices = np.frombuffer(r.get('csr_matrix_indices'), dtype=np.int32)
@@ -251,7 +288,7 @@ class FollowAPIView(generics.GenericAPIView):
         if not created:
             return Response({'error': 'Already following this user'}, status=400)
 
-        return Response(self.get_serializer(following).data)
+        return Response(True)
 
     def delete(self, request, *args, **kwargs):
         following_id = request.data.get('following_id')
@@ -290,4 +327,6 @@ class FollowAPIView(generics.GenericAPIView):
 
         follow.delete()
 
-        return Response(self.get_serializer(following).data)
+        print(self)
+
+        return Response(True)

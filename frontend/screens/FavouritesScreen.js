@@ -7,23 +7,35 @@ import globalStyles from "../config/globalStyles";
 import { useAuth } from "../context/AuthContext";
 import Title from "../components/Title";
 import { API_URLL as API_URL } from "@env";
+import { useFocusEffect } from "@react-navigation/native";
 
 const FavouritesScreen = ({ navigation }) => {
 	const [results, setResults] = useState([]);
 	const { state, dispatch } = useAuth();
 
-	useEffect(() => {
-		axios
-			.get(`${API_URL}/api/user/?id__in=${state.user.following.toString()},`)
-			.then((res) => {
-				console.log(res);
-				setResults(res.data.results);
-			})
-			.catch((err) => {
-				console.log(err.response);
-				return;
-			});
-	}, [state]);
+	useFocusEffect(
+		React.useCallback(() => {
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			};
+
+			console.log("Getting followers");
+
+			config.headers["Authorization"] = `Token ${state.userToken}`;
+			axios
+				.get(`${API_URL}/api/follow?ordering=-followed_on`, config)
+				.then((res) => {
+					console.log(res.data);
+					setResults(res.data.map((item) => item.following));
+				})
+				.catch((err) => {
+					console.log(err.response);
+					return;
+				});
+		}, [])
+	);
 
 	return (
 		<>

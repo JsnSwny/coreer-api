@@ -25,6 +25,8 @@ geocoder = "*"
 geopy = "*"
 celery = "*"
 django-select2 = "*"
+django-cors-headers = "*"
+asgiref = "*"
 
 [dev-packages]
 

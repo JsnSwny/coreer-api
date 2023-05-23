@@ -18,6 +18,9 @@ class ConversationViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             name__contains=self.request.user.id
         )
 
+        print("CONVO SERIAL")
+        print(self.request.user)
+
         return queryset
 
     def get_serializer_context(self):

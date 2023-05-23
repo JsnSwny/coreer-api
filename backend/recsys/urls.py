@@ -8,6 +8,7 @@ router.register("recommendations", RecommendationViewSet)
 
 
 urlpatterns = [
-    path('recommend/<int:user_id>/<int:n>', get_recommendations, name='get_recommendations'),
+    path('recommend/<int:n>', get_recommendations, name='get_recommendations'),
+    path('recommend/<int:n>/<int:user_id>', get_recommendations, name='get_recommendations'),
     path('api/', include(router.urls))
 ]

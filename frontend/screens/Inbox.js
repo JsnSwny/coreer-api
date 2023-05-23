@@ -25,7 +25,14 @@ const Inbox = ({ navigation }) => {
 			axios
 				.get(`${API_URL}/api/conversations/`, config)
 				.then((res) => {
-					setConversations(res.data);
+					setConversations(
+						res.data.sort(
+							(a, b) =>
+								new Date(b.last_message.timestamp) -
+								new Date(a.last_message.timestamp)
+						)
+					);
+					console.log(res.data);
 				})
 				.catch((err) => console.log(err));
 		}, [])

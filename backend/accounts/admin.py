@@ -9,6 +9,7 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
+    search_fields = ['first_name','last_name','id','email']
     list_display = ('id', 'first_name', 'last_name', 'email', 'bio', 'type', 'is_staff', 'is_active',)
     list_filter = ('is_staff', 'is_active',)
 
@@ -26,6 +27,7 @@ class CustomUserAdmin(UserAdmin):
 
 class ProjectAdmin(admin.ModelAdmin):
     autocomplete_fields = ["user"]
+    search_fields = ['title', 'user__id']
 
 class FollowAdmin(admin.ModelAdmin):
     autocomplete_fields = ["follower", "following"]

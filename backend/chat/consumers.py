@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from .models import Conversation, Message
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.auth import get_user_model
-from .serializers import MessageSerializer
+from .serializers import MessageSerializer, ConversationSerializer
 
 User = get_user_model()
 
@@ -27,12 +27,7 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def connect(self):
         self.user = self.scope["user"]
-        print("Connecting")
-        print(self.scope)
-        print(self.scope['user'])
-        print("user")
         self.conversation_name = self.scope["url_route"]["kwargs"]["room_name"]
-        print(self.conversation_name)
         self.conversation, created = Conversation.objects.get_or_create(name=self.conversation_name)
 
         # Join room group
@@ -46,12 +41,17 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.accept()
 
         messages = self.conversation.messages.all().order_by("timestamp")[0:50]
-        print(messages)
         messages_ser = MessageSerializer(messages, many=True).data
+
+        print("USER:")
+        print(self.scope["user"])
+        print("SCOPE:")
+        print(self.scope)
 
         self.send_json({
             "type": "message_history",
             "messages": messages_ser,
+            # "conversation": ConversationSerializer(self.conversation, context={"user": self.scope["user"]}).data
         })
 
     def disconnect(self, close_code):
@@ -63,6 +63,10 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def receive_json(self, content, **kwargs):
         message_type = content["type"]
+
+        print("SENDING MESSAGE")
+        print(self.scope["user"])
+
         if message_type == "chat_message":
             message = Message.objects.create(
                 from_user=self.user,

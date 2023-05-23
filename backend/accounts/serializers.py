@@ -16,10 +16,7 @@ class InterestSerializer(serializers.ModelSerializer):
         model = Interest
         fields = '__all__'
 
-class FollowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Follow
-        fields = '__all__'
+
 
 class ProjectSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)
@@ -61,8 +58,15 @@ class UserSerializer(serializers.ModelSerializer):
         return False
     
     def get_following(self, obj):
-        follows = Follow.objects.filter(follower=obj)
+        follows = Follow.objects.filter(follower=obj).order_by('-followed_on')
         return list(follows.values_list("following", flat=True))
+    
+class FollowSerializer(serializers.ModelSerializer):
+    follower = UserSerializer(read_only=True)
+    following = UserSerializer(read_only=True)
+    class Meta:
+        model = Follow
+        fields = '__all__'
 
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):

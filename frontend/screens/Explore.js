@@ -42,7 +42,7 @@ const Explore = ({ navigation }) => {
 	const getRecommendations = () => {
 		setRefreshing(true);
 		axios
-			.get(`${API_URL}/recommend/${state.user.id}/10`)
+			.get(`${API_URL}/recommend/10/${state.user.id}`)
 			.then((res) => {
 				setProfiles(res.data["recommendations"].slice(0, 50));
 				setRefreshing(false);

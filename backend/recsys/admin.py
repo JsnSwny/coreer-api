@@ -1,4 +1,7 @@
 from django.contrib import admin
 from .models import Recommendation
 
-admin.site.register(Recommendation)
+class RecommendationAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["from_user", "to_user"]
+
+admin.site.register(Recommendation, RecommendationAdmin)

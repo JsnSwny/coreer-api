@@ -45,6 +45,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_other_user(self, obj):
         ids = obj.name.split("__")
+        
         for id in ids:
             if int(id) != int(self.context["user"].id):
                 other_user = User.objects.get(id=id)
