@@ -14,13 +14,13 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('is_staff', 'is_active',)
 
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name', 'email', 'bio', 'tfidf_input', 'type', 'languages', 'interests', 'job', 'lat', 'lon', 'location', 'profile_photo', 'password')}),
+        (None, {'fields': ('image', 'first_name', 'last_name', 'email', 'bio', 'tfidf_input', 'type', 'languages', 'interests', 'job', 'lat', 'lon', 'location', 'profile_photo', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('first_name', 'last_name', 'email', 'bio', 'password1', 'password2', 'is_staff', 'is_active')}
+            'fields': ('image', 'first_name', 'last_name', 'email', 'bio', 'password1', 'password2', 'is_staff', 'is_active')}
         ),
     )
     ordering = ('email',)

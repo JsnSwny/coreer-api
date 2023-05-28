@@ -58,7 +58,9 @@ class CustomUser(AbstractUser):
         (STUDENT, 'Student'),
         (PROFESSIONAL, 'Professional'),
     ]
+    
     username = None
+    image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     email = models.EmailField('email address', unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -72,6 +74,7 @@ class CustomUser(AbstractUser):
     interests = models.ManyToManyField(Interest)
     tfidf_input = models.CharField(max_length=1000, default="")
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="Student")
+    onboarded = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 

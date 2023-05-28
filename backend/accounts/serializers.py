@@ -37,7 +37,7 @@ class EducationSerializer(serializers.ModelSerializer):
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
-    onboarded = serializers.SerializerMethodField()
+    # onboarded = serializers.SerializerMethodField()
     following = serializers.SerializerMethodField()
     languages = LanguageSerializer(read_only=True, many=True)
     interests = InterestSerializer(read_only=True, many=True)
@@ -50,12 +50,12 @@ class UserSerializer(serializers.ModelSerializer):
         queryset=Project.objects.all(), source='projects', many=True, write_only=True, required=False)
     class Meta:
         model = CustomUser
-        fields = ('id', 'onboarded', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'image', 'onboarded', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
 
-    def get_onboarded(self, obj):
-        if obj.first_name and obj.last_name and len(obj.languages.all()) != 0 and len(obj.interests.all()) != 0:
-            return True
-        return False
+    # def get_onboarded(self, obj):
+    #     if obj.first_name and obj.last_name and len(obj.languages.all()) != 0 and len(obj.interests.all()) != 0:
+    #         return True
+    #     return False
     
     def get_following(self, obj):
         follows = Follow.objects.filter(follower=obj).order_by('-followed_on')
@@ -115,4 +115,4 @@ class ProfilesSerializer(serializers.ModelSerializer):
     educations = EducationSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
