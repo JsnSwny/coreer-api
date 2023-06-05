@@ -6,3 +6,5 @@
 node_modules
 projects.json
 *.sqlite3
+django_data.csv
+data-16.csv
