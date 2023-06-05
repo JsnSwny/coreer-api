@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowAPIView, InterestViewSet
+from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet
 from knox import views as knox_views
 
 
@@ -10,6 +10,10 @@ router.register('profiles', ProfilesViewSet, 'profiles')
 router.register('user', UpdateUserViewSet, 'user')
 router.register('interests', InterestViewSet, 'interests')
 router.register('follow', FollowAPIView, 'follow')
+router.register('projects', ProjectViewSet, 'projects')
+router.register('schools', SchoolViewSet, 'schools')
+router.register('educations', EducationViewSet, 'educations')
+router.register('work-experiences', WorkExperienceViewSet, 'work-experiences')
 
 urlpatterns = [
     path('api/auth/', include('knox.urls')),

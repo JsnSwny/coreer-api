@@ -34,13 +34,7 @@ def base_recommend(r, user_id, id_dict, n):
         r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
 
     print(f"Redis completed in {time.time() - start_time}s")
-    # print(tfidf_matrix)
     sim = cosine_similarity(tfidf_matrix, tfidf_matrix[id_dict[user_id]])[0:168105]
-    print(sim[0:100])
-
-
-    print(f"Sim completed in {time.time() - start_time}s")
-    
 
     interactions = Recommendation.objects.filter(from_user__id=user_id).values_list("to_user__id", "recommended_on")
     for i in interactions:
@@ -49,8 +43,9 @@ def base_recommend(r, user_id, id_dict, n):
         sim[id_dict[i[0]]] *= (0.9 - abs(days * 0.1))
     scores = enumerate(sim)
 
-    # sorted_scores=sorted(scores,key=lambda x:x[1], reverse=True)
-    sorted_scores = heapq.nlargest(n, scores, key=lambda x: x[1])
+    sorted_scores = heapq.nlargest(100, scores, key=lambda x: x[1])
+    print(f"Sorted Scores")
+    print(sorted_scores)
     print(f"Base completed in {time.time() - start_time}s")
     return sorted_scores[0:20]
 

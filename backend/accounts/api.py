@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer
-from .models import CustomUser, Follow, Interest
+from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer
+from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, login
@@ -169,6 +169,13 @@ class ProfilesViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data)
     
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        return Project.objects.all()
+    
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
@@ -210,6 +217,37 @@ class InterestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Interest.objects.all()
+
+
+class SchoolPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = 'perPage'
+    max_page_size = 100
+
+class SchoolViewSet(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer
+    pagination_class = SchoolPagination
+
+    search_fields = ['name']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+    def get_queryset(self):
+        return School.objects.all()
+    
+class EducationViewSet(viewsets.ModelViewSet):
+    queryset = Education.objects.all()
+    serializer_class = EducationSerializer
+
+    def get_queryset(self):
+        return Education.objects.all()
+    
+class WorkExperienceViewSet(viewsets.ModelViewSet):
+    queryset = WorkExperience.objects.all()
+    serializer_class = WorkExperienceSerializer
+
+    def get_queryset(self):
+        return WorkExperience.objects.all()
     
 
 class FollowAPIView(viewsets.ModelViewSet):

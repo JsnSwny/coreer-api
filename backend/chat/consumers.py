@@ -51,7 +51,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.send_json({
             "type": "message_history",
             "messages": messages_ser,
-            # "conversation": ConversationSerializer(self.conversation, context={"user": self.scope["user"]}).data
+            "conversation": ConversationSerializer(self.conversation, context={"user": self.scope["user"]}).data
         })
 
     def disconnect(self, close_code):

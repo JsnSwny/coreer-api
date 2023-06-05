@@ -60,7 +60,7 @@ class CustomUser(AbstractUser):
     ]
     
     username = None
-    image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    image = models.ImageField(upload_to='profiles/', default='profiles/default-image.png')
     email = models.EmailField('email address', unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -92,15 +92,27 @@ class Education(models.Model):
     degree = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
+
+class WorkExperience(models.Model):
+    user = models.ForeignKey(CustomUser, related_name='work_experiences', on_delete=models.CASCADE, null=True, blank=True)
+    job_title = models.CharField(max_length=255)
+    company = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
     
 class Project(models.Model):
     image = models.ImageField(upload_to='uploads/', blank=True)
+    video = models.FileField(upload_to="project_videos", null=True, blank=True)
     user = models.ForeignKey(CustomUser, related_name='projects', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
+    content = models.TextField()
     
 class Follow(models.Model):
     follower = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)

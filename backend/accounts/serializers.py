@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
 import geocoder
@@ -29,8 +29,18 @@ class SchoolSerializer(serializers.ModelSerializer):
         model = School
         fields = '__all__'
 
+class WorkExperienceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkExperience
+        fields = '__all__'
+
 class EducationSerializer(serializers.ModelSerializer):
     school = SchoolSerializer(read_only=True)
+    school_id = serializers.PrimaryKeyRelatedField(
+        queryset=School.objects.all(),
+        source='school',
+        write_only=True
+    )
     class Meta:
         model = Education
         fields = '__all__'
@@ -42,20 +52,19 @@ class UserSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)
     interests = InterestSerializer(read_only=True, many=True)
     projects = ProjectSerializer(read_only=True, many=True)
+    educations = EducationSerializer(read_only=True, many=True)
+    work_experiences = WorkExperienceSerializer(read_only=True, many=True)
     interests_id = serializers.PrimaryKeyRelatedField(
         queryset=Interest.objects.all(), source='interests', many=True, write_only=True, required=False)
     languages_id = serializers.PrimaryKeyRelatedField(
         queryset=Language.objects.all(), source='languages', many=True, write_only=True, required=False)
     projects_id = serializers.PrimaryKeyRelatedField(
         queryset=Project.objects.all(), source='projects', many=True, write_only=True, required=False)
+    work_experiences_id = serializers.PrimaryKeyRelatedField(
+        queryset=WorkExperience.objects.all(), source='work_experiences', many=True, write_only=True, required=False)
     class Meta:
         model = CustomUser
-        fields = ('id', 'image', 'onboarded', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
-
-    # def get_onboarded(self, obj):
-    #     if obj.first_name and obj.last_name and len(obj.languages.all()) != 0 and len(obj.interests.all()) != 0:
-    #         return True
-    #     return False
+        fields = ('id', 'image', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
     
     def get_following(self, obj):
         follows = Follow.objects.filter(follower=obj).order_by('-followed_on')
@@ -113,6 +122,7 @@ class ProfilesSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)
     projects = ProjectSerializer(read_only=True, many=True)
     educations = EducationSerializer(read_only=True, many=True)
+    work_experiences = WorkExperienceSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'work_experiences', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
