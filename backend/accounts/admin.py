@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education, Question, UserAnswer
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, Question, UserAnswer, CareerLevel
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('is_staff', 'is_active',)
 
     fieldsets = (
-        (None, {'fields': ('image', 'username', 'first_name', 'last_name', 'email', 'bio', 'tfidf_input', 'type', 'languages', 'interests', 'job', 'lat', 'lon', 'location', 'profile_photo', 'password')}),
+        (None, {'fields': ('image', 'username', 'first_name', 'last_name', 'email', 'bio', 'tfidf_input', 'type', 'languages', 'interests', 'current_level', 'looking_for', 'job', 'lat', 'lon', 'location', 'profile_photo', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     add_fieldsets = (
@@ -42,6 +42,7 @@ admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Follow, FollowAdmin)
 admin.site.register(Language)
 admin.site.register(Interest)
+admin.site.register(CareerLevel)
 admin.site.register(UserAnswer, UserAnswerAdmin)
 admin.site.register(Question)
 admin.site.register(Project, ProjectAdmin)

@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer, QuestionSerializer, UserAnswerSerializer
-from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience, Question, UserAnswer
+from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer, QuestionSerializer, UserAnswerSerializer, CareerLevelSerializer
+from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, login
@@ -60,19 +60,7 @@ class UserAPI(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
     def get_object(self):
-        print("GETTING USER")
-        print(self.request.user)
         return self.request.user
-
-# # Get User API
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = CustomUser.objects.all()
-#     serializer_class = UpdateUserSerializer
-
-#     def get_queryset(self):
-#         return self.request.user
-
 
 
 class CustomPagination(PageNumberPagination):
@@ -221,10 +209,17 @@ class InterestViewSet(viewsets.ModelViewSet):
 class UserAnswerViewSet(viewsets.ModelViewSet):
     queryset = UserAnswer.objects.all()
     serializer_class = UserAnswerSerializer
-    
+
+
 class QuestionList(generics.ListAPIView):
     serializer_class = QuestionSerializer
     queryset = Question.objects.all()
+
+class CareerLevelList(generics.ListAPIView):
+    serializer_class = CareerLevelSerializer
+    queryset = CareerLevel.objects.all()
+
+
     
 
 class SchoolPagination(PageNumberPagination):

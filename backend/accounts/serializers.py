@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience, Question, UserAnswer
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
 import geocoder
@@ -39,6 +39,11 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = '__all__'
 
+class CareerLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CareerLevel
+        fields = '__all__'
+
 class UserAnswerSerializer(serializers.ModelSerializer):
     question = QuestionSerializer(read_only=True)
     question_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Question.objects.all(), source="question")
@@ -76,9 +81,18 @@ class UserSerializer(serializers.ModelSerializer):
         queryset=WorkExperience.objects.all(), source='work_experiences', many=True, write_only=True, required=False)
     
     user_answers = UserAnswerSerializer(read_only=True, many=True)
+
+    current_level = CareerLevelSerializer(read_only=True)
+    current_level_id = serializers.PrimaryKeyRelatedField(
+        queryset=CareerLevel.objects.all(), source='current_level', write_only=True, required=False)
+    
+    looking_for = CareerLevelSerializer(read_only=True, many=True)
+    looking_for_id = serializers.PrimaryKeyRelatedField(
+        queryset=CareerLevel.objects.all(), source='looking_for', many=True, write_only=True, required=False)
+
     class Meta:
         model = CustomUser
-        fields = ('id', 'image', 'user_answers', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'image', 'user_answers', 'current_level', 'current_level_id', 'looking_for', 'looking_for_id', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
     
     def get_following(self, obj):
         follows = Follow.objects.filter(follower=obj).order_by('-followed_on')

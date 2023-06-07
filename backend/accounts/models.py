@@ -21,6 +21,16 @@ class Interest(models.Model):
     def __str__(self):
         return f"{self.name}"
     
+class CareerLevel(models.Model):
+    INTEREST_TYPES = (
+        ('S', 'Student'),
+        ('P', 'Professional')
+    )
+
+    name = models.CharField(max_length=20)
+    level_type = models.CharField(max_length=1, choices=INTEREST_TYPES)
+    def __str__(self):
+        return self.name
 
 
 class School(models.Model):
@@ -87,6 +97,8 @@ class CustomUser(AbstractUser):
     profile_photo = models.CharField(max_length=500, blank=True, null=True)
     languages = models.ManyToManyField(Language)
     interests = models.ManyToManyField(Interest)
+    current_level = models.ForeignKey(CareerLevel, on_delete=models.CASCADE, related_name="current_level_users", null=True, blank=True)
+    looking_for = models.ManyToManyField(CareerLevel, related_name="looking_for_users", null=True, blank=True)
     tfidf_input = models.CharField(max_length=1000, default="")
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="Student")
     onboarded = models.BooleanField(default=False)
