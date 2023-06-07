@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, Question, UserAnswer
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -35,10 +35,15 @@ class FollowAdmin(admin.ModelAdmin):
 class EducationAdmin(admin.ModelAdmin):
     autocomplete_fields = ["user"]
 
+class UserAnswerAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["user"]
+
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Follow, FollowAdmin)
 admin.site.register(Language)
 admin.site.register(Interest)
+admin.site.register(UserAnswer, UserAnswerAdmin)
+admin.site.register(Question)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(School)
 admin.site.register(Education, EducationAdmin)

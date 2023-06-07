@@ -50,6 +50,14 @@ class CustomUserManager(BaseUserManager):
         
         return self.create_user(email, password, **extra_fields)
 
+class Question(models.Model):
+    QUESTION_TYPES = (
+        ('S', 'Student'),
+        ('P', 'Professional'),
+        ('R', 'Project')
+    )
+    text = models.TextField()
+    question_type = models.CharField(max_length=1, choices=QUESTION_TYPES)
 
 class CustomUser(AbstractUser):
     STUDENT = 'Student'
@@ -76,7 +84,6 @@ class CustomUser(AbstractUser):
     tfidf_input = models.CharField(max_length=1000, default="")
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="Student")
     onboarded = models.BooleanField(default=False)
-
     objects = CustomUserManager()
 
     def add_language(self, language_name):
@@ -86,6 +93,12 @@ class CustomUser(AbstractUser):
     
     def __str__(self):
         return self.email
+    
+class UserAnswer(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.TextField()
+
     
 class Education(models.Model):
     user = models.ForeignKey(CustomUser, related_name='educations', on_delete=models.CASCADE, null=True, blank=True)
