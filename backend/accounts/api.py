@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer
-from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience
+from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer, QuestionSerializer, UserAnswerSerializer
+from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience, Question, UserAnswer
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, login
@@ -217,7 +217,15 @@ class InterestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Interest.objects.all()
-
+    
+class UserAnswerViewSet(viewsets.ModelViewSet):
+    queryset = UserAnswer.objects.all()
+    serializer_class = UserAnswerSerializer
+    
+class QuestionList(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    queryset = Question.objects.all()
+    
 
 class SchoolPagination(PageNumberPagination):
     page_size = 50

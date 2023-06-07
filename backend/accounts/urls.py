@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet
+from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet
 from knox import views as knox_views
 from .views import GitHubLogin, exchange_code_for_access_token
 
@@ -14,6 +14,7 @@ router.register('projects', ProjectViewSet, 'projects')
 router.register('schools', SchoolViewSet, 'schools')
 router.register('educations', EducationViewSet, 'educations')
 router.register('work-experiences', WorkExperienceViewSet, 'work-experiences')
+router.register('user-answers', UserAnswerViewSet, 'work-experiences')
 
 urlpatterns = [
     path('most-popular-languages/', get_popular_languages),
@@ -23,5 +24,6 @@ urlpatterns = [
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
     path('exchange-token/', exchange_code_for_access_token, name="exchange_token"),
     path('api/github/', GitHubLogin.as_view(), name='github_login'),
+    path('api/questions/', QuestionList.as_view(), name="question-list"),
     path('api/', include(router.urls)),
 ]

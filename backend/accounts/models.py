@@ -10,7 +10,13 @@ class Language(models.Model):
         return f"{self.name} -> {self.icon_name}"
     
 class Interest(models.Model):
+    INTEREST_TYPES = (
+        ('C', 'Career'),
+        ('P', 'Personal'),
+    )
+
     name = models.CharField(max_length=255, unique=True)
+    interest_type = models.CharField(max_length=1, choices=INTEREST_TYPES)
 
     def __str__(self):
         return f"{self.name}"
@@ -95,7 +101,7 @@ class CustomUser(AbstractUser):
         return self.email
     
 class UserAnswer(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_answers")
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.TextField()
 

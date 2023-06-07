@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience, Question, UserAnswer
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
 import geocoder
@@ -34,6 +34,18 @@ class WorkExperienceSerializer(serializers.ModelSerializer):
         model = WorkExperience
         fields = '__all__'
 
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+class UserAnswerSerializer(serializers.ModelSerializer):
+    question = QuestionSerializer(read_only=True)
+    question_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Question.objects.all(), source="question")
+    class Meta:
+        model = UserAnswer
+        fields = '__all__'
+
 class EducationSerializer(serializers.ModelSerializer):
     school = SchoolSerializer(read_only=True)
     school_id = serializers.PrimaryKeyRelatedField(
@@ -62,9 +74,11 @@ class UserSerializer(serializers.ModelSerializer):
         queryset=Project.objects.all(), source='projects', many=True, write_only=True, required=False)
     work_experiences_id = serializers.PrimaryKeyRelatedField(
         queryset=WorkExperience.objects.all(), source='work_experiences', many=True, write_only=True, required=False)
+    
+    user_answers = UserAnswerSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'image', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'image', 'user_answers', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
     
     def get_following(self, obj):
         follows = Follow.objects.filter(follower=obj).order_by('-followed_on')
