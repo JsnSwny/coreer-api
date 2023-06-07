@@ -28,6 +28,14 @@ class MessageSerializer(serializers.ModelSerializer):
 User = get_user_model()
 
 
+from dj_rest_auth.registration.serializers import RegisterSerializer
+
+class CustomRegisterSerializer(RegisterSerializer):
+    def save(self, request):
+        user = super().save(request)
+        user.emailaddress_set.update(verified=True)
+        return user
+
 class ConversationSerializer(serializers.ModelSerializer):
     other_user = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()

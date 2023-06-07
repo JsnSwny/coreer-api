@@ -58,8 +58,9 @@ class CustomUser(AbstractUser):
         (STUDENT, 'Student'),
         (PROFESSIONAL, 'Professional'),
     ]
-    
-    username = None
+
+    # username = models.CharField(max_length=150, unique=True)
+
     image = models.ImageField(upload_to='profiles/', default='profiles/default-image.png')
     email = models.EmailField('email address', unique=True)
     USERNAME_FIELD = 'email'

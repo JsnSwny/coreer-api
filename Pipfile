@@ -27,6 +27,9 @@ celery = "*"
 django-select2 = "*"
 django-cors-headers = "*"
 asgiref = "*"
+django-rest-auth = "*"
+dj-rest-auth = "*"
+django-allauth = "*"
 
 [dev-packages]
 

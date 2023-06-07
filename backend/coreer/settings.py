@@ -54,11 +54,43 @@ INSTALLED_APPS = [
     'knox',
     'rest_framework',
     'storages',
-    'corsheaders'
+    'corsheaders',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
 ]
 
+SITE_ID = 1
+
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication'],
+}
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': '4710f43b56ca1572e2a8',
+            'secret': 'a265125f9ee537c3e0665fdecb8b7cc32af0d156',
+            'key': ''
+        }
+    }
+}
+
+REGISTRATION_SERIALIZER = 'accounts.serializers.RegisterSerializer'
+
+REST_AUTH = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.RegisterSerializer',
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer'
 }
 
 ASGI_APPLICATION = "coreer.asgi.application"

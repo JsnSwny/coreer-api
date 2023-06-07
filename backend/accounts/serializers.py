@@ -77,18 +77,38 @@ class FollowSerializer(serializers.ModelSerializer):
         model = Follow
         fields = '__all__'
 
+from dj_rest_auth.registration.serializers import RegisterSerializer
+
+class CustomRegisterSerializer(RegisterSerializer):
+    # Exclude the username field
+    username = None
+
+    # Add your custom fields here
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    # Add any other fields you need for registration
+
+    def custom_signup(self, request, user):
+        # Set custom fields on the user object
+        user.first_name = self.validated_data.get('first_name', '')
+        user.last_name = self.validated_data.get('last_name', '')
+        # Set any other custom fields
+
+        # Save the user object
+        user.save()
+
 # Register Serializer
-class RegisterSerializer(serializers.ModelSerializer):
-    onboarded = serializers.SerializerMethodField()
+class RegisterSerializer(RegisterSerializer):
+    # onboarded = serializers.SerializerMethodField()
     class Meta:
         model = CustomUser
-        fields = ('id', 'onboarded', 'first_name', 'last_name', 'email', 'password')
+        fields = ('id', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def get_onboarded(self, obj):
-        if obj.first_name and obj.first_name:
-            return True
-        return False
+    # def get_onboarded(self, obj):
+    #     if obj.first_name and obj.first_name:
+    #         return True
+    #     return False
 
     def create(self, validated_data):
         password = validated_data.pop('password')

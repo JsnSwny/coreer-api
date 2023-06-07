@@ -4,7 +4,7 @@ from .recommend import get_top_n_recommendations
 from accounts.serializers import UserSerializer
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
-from knox.auth import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 
 @csrf_exempt
 @api_view(['GET'])
