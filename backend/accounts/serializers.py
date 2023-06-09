@@ -100,7 +100,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'image', 'social_account', 'user_answers', 'current_level', 'current_level_id', 'looking_for', 'looking_for_id', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'username', 'image', 'social_account', 'user_answers', 'current_level', 'current_level_id', 'looking_for', 'looking_for_id', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
     
     def get_following(self, obj):
         follows = Follow.objects.filter(follower=obj).order_by('-followed_on')
@@ -190,4 +190,4 @@ class ProfilesSerializer(serializers.ModelSerializer):
     looking_for = CareerLevelSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'user_answers', 'interests', 'current_level', 'looking_for', 'work_experiences', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'username', 'user_answers', 'interests', 'current_level', 'looking_for', 'work_experiences', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')

@@ -15,44 +15,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 
-# Register API
-class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-
-        email = serializer.validated_data['email']
-        password = serializer.validated_data['password']
-
-        authenticated_user = authenticate(request, email=email, password=password)
-
-        # Log in the user
-        login(request, authenticated_user)
-
-        return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(user)[1]
-        })
-
-# Login API
-class LoginAPI(generics.GenericAPIView):
-    serializer_class = LoginSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
-        login(request, user)
-        return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(user)[1]
-        })
-
-# Get User API
-
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -80,13 +42,27 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
         'id': ["in", "exact"]
     }
 
+    def get_unique_username(self, first_name, last_name):
+        base_username = f"{first_name.lower()}-{last_name.lower()}"
+        username = base_username
+        counter = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = f"{base_username}-{counter}"
+            counter += 1
+        return username
+
 
     def update(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+
+
         user = request.user
+
+        user.username = self.get_unique_username(user.first_name, user.last_name)
+
         if len(user.languages.all()) > 0:
             clean_input = ""
             if user.bio:
@@ -139,23 +115,13 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
 
 # Get User API
 
-class ProfilesViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+class RetrieveProfile(generics.RetrieveAPIView):
     serializer_class = ProfilesSerializer
 
-    def get_queryset(self):
-        print("Getting all users")
-        return CustomUser.objects.all()
-
     def get_object(self):
-        obj = get_object_or_404(CustomUser.objects.filter(id=self.kwargs["pk"]))
+        username = self.kwargs['username']
+        obj = get_object_or_404(CustomUser.objects.filter(username=username))
         return obj
-
-    def update(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
     
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()

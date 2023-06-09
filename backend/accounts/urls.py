@@ -1,12 +1,11 @@
 from django.urls import path, include
-from .api import RegisterAPI, LoginAPI, UserAPI, ProfilesViewSet, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet, CareerLevelList
+from .api import UserAPI, RetrieveProfile, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet, CareerLevelList
 from knox import views as knox_views
 from .views import GitHubLogin, exchange_code_for_access_token
 
 from .views import get_popular_languages
 from rest_framework import routers
 router = routers.DefaultRouter()
-router.register('profiles', ProfilesViewSet, 'profiles')
 router.register('user', UpdateUserViewSet, 'user')
 router.register('interests', InterestViewSet, 'interests')
 router.register('follow', FollowAPIView, 'follow')
@@ -26,5 +25,6 @@ urlpatterns = [
     path('api/github/', GitHubLogin.as_view(), name='github_login'),
     path('api/questions/', QuestionList.as_view(), name="question-list"),
     path('api/career-levels/', CareerLevelList.as_view(), name="career-level-list"),
+    path('api/profiles/<str:username>/', RetrieveProfile.as_view(), name="profiles-list"),
     path('api/', include(router.urls)),
 ]
