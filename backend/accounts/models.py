@@ -145,6 +145,11 @@ class Project(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
     content = models.TextField()
+
+class ProjectAnswer(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_answers")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.TextField()
     
 class Follow(models.Model):
     follower = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)

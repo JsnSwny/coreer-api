@@ -1,7 +1,7 @@
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
-from knox.auth import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 from channels.db import database_sync_to_async
 
 
@@ -28,18 +28,20 @@ from channels.middleware import BaseMiddleware
 
 @database_sync_to_async
 def get_user(token_key):
-		knoxAuth = TokenAuthentication()
-		user, auth_token = knoxAuth.authenticate_credentials(token_key.encode("ascii"))
-		return user
+    try:
+        user, _ = TokenAuthentication().authenticate_credentials(token_key)
+    except Exception:
+        user = None
+    return user
 
 class TokenAuthMiddleware(BaseMiddleware):
-		def __init__(self, inner):
-				super().__init__(inner)
+    def __init__(self, inner):
+        super().__init__(inner)
 
-		async def __call__(self, scope, receive, send):
-				try:
-						token_key = (dict((x.split('=') for x in scope['query_string'].decode().split("&")))).get('token', None)
-				except ValueError:
-						token_key = None
-				scope['user'] = AnonymousUser() if token_key is None else await get_user(token_key)
-				return await super().__call__(scope, receive, send)
+    async def __call__(self, scope, receive, send):
+        try:
+            token_key = (dict((x.split('=') for x in scope['query_string'].decode().split("&")))).get('token', None)
+        except ValueError:
+            token_key = None
+        scope['user'] = AnonymousUser() if token_key is None else await get_user(token_key)
+        return await super().__call__(scope, receive, send)

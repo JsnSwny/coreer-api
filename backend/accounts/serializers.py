@@ -5,6 +5,7 @@ from django.http import JsonResponse, response
 import geocoder
 from geopy.geocoders import Nominatim
 from functools import partial
+from allauth.socialaccount.models import SocialAccount
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -62,6 +63,11 @@ class EducationSerializer(serializers.ModelSerializer):
         model = Education
         fields = '__all__'
 
+class SocialAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialAccount
+        fields = ['provider', 'uid', 'extra_data']
+
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
     # onboarded = serializers.SerializerMethodField()
@@ -89,14 +95,22 @@ class UserSerializer(serializers.ModelSerializer):
     looking_for = CareerLevelSerializer(read_only=True, many=True)
     looking_for_id = serializers.PrimaryKeyRelatedField(
         queryset=CareerLevel.objects.all(), source='looking_for', many=True, write_only=True, required=False)
+    
+    social_account = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'image', 'user_answers', 'current_level', 'current_level_id', 'looking_for', 'looking_for_id', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'image', 'social_account', 'user_answers', 'current_level', 'current_level_id', 'looking_for', 'looking_for_id', 'onboarded', 'work_experiences', 'work_experiences_id', 'educations', 'following', 'languages', 'languages_id', 'interests', 'interests_id', 'projects', 'projects_id', 'first_name', 'last_name', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
     
     def get_following(self, obj):
         follows = Follow.objects.filter(follower=obj).order_by('-followed_on')
         return list(follows.values_list("following", flat=True))
+    
+    def get_social_account(self, obj):
+        social_account = SocialAccount.objects.filter(user=obj).first()
+        if social_account:
+            return SocialAccountSerializer(social_account).data
+        return
     
 class FollowSerializer(serializers.ModelSerializer):
     follower = UserSerializer(read_only=True)
@@ -171,6 +185,9 @@ class ProfilesSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(read_only=True, many=True)
     educations = EducationSerializer(read_only=True, many=True)
     work_experiences = WorkExperienceSerializer(read_only=True, many=True)
+    interests = InterestSerializer(read_only=True, many=True)
+    user_answers = UserAnswerSerializer(read_only=True, many=True)
+    looking_for = CareerLevelSerializer(read_only=True, many=True)
     class Meta:
         model = CustomUser
-        fields = ('id', 'work_experiences', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
+        fields = ('id', 'user_answers', 'interests', 'current_level', 'looking_for', 'work_experiences', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
