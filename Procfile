@@ -1,0 +1,1 @@
+web: gunicorn coreer.wsgi --log-file -
