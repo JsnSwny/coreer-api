@@ -30,6 +30,8 @@ asgiref = "*"
 django-rest-auth = "*"
 dj-rest-auth = "*"
 django-allauth = "*"
+gunicorn = "*"
+django-heroku = "*"
 
 [dev-packages]
 
