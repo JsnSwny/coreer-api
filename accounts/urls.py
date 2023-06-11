@@ -1,6 +1,5 @@
 from django.urls import path, include
 from .api import UserAPI, RetrieveProfile, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet, CareerLevelList
-from knox import views as knox_views
 from .views import GitHubLogin, exchange_code_for_access_token
 
 from .views import get_popular_languages

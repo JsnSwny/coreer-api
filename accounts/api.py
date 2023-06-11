@@ -1,6 +1,5 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from knox.models import AuthToken
 from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer, QuestionSerializer, UserAnswerSerializer, CareerLevelSerializer
 from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel
 from django.shortcuts import get_object_or_404

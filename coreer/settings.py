@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'knox',
     'rest_framework',
     'storages',
     'corsheaders',
