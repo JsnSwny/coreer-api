@@ -56,59 +56,59 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-
-
         user = request.user
 
         user.username = self.get_unique_username(user.first_name, user.last_name)
 
-        if len(user.languages.all()) > 0:
-            clean_input = ""
-            if user.bio:
-                clean_input += user.bio
 
-            if len(user.interests.all()) > 0:
-                for interest in user.interests.all():
-                    clean_input += f"{interest.name} "
+        # CODE FOR UPDATING RECOMMENDATIONS
+        # if len(user.languages.all()) > 0:
+        #     clean_input = ""
+        #     if user.bio:
+        #         clean_input += user.bio
 
-            if len(user.languages.all()) > 0:
-                for language in user.languages.all():
-                    clean_input += f"[lang_{language.name}] "
+        #     if len(user.interests.all()) > 0:
+        #         for interest in user.interests.all():
+        #             clean_input += f"{interest.name} "
+
+        #     if len(user.languages.all()) > 0:
+        #         for language in user.languages.all():
+        #             clean_input += f"[lang_{language.name}] "
             
-            user.tfidf_input = clean_input
-            user.save()
+        #     user.tfidf_input = clean_input
+        #     user.save()
 
-            r = redis.Redis(host='localhost', port=6379, db=0)
+        #     r = redis.Redis(host='localhost', port=6379, db=0)
 
-            user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
-            id_dict = dict(zip(user_ids, range(len(user_ids))))
-            following = Follow.objects.values_list("follower__id", "following__id")
+        #     user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
+        #     id_dict = dict(zip(user_ids, range(len(user_ids))))
+        #     following = Follow.objects.values_list("follower__id", "following__id")
 
             
-            row = []
-            col = []
-            data = []
+        #     row = []
+        #     col = []
+        #     data = []
 
-            for i in following:
-                row.append(id_dict[i[0]])
-                col.append(id_dict[i[1]])
-                data.append(1)
+        #     for i in following:
+        #         row.append(id_dict[i[0]])
+        #         col.append(id_dict[i[1]])
+        #         data.append(1)
 
-            sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
+        #     sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
 
-            r.set('csr_matrix_data', sparse_matrix.data.tobytes())
-            r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
-            r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
-            r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
+        #     r.set('csr_matrix_data', sparse_matrix.data.tobytes())
+        #     r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
+        #     r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
+        #     r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
 
-            vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
-            user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
-            tfidf_matrix = vec.fit_transform(user_bios)
+        #     vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
+        #     user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
+        #     tfidf_matrix = vec.fit_transform(user_bios)
 
-            r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
-            r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
-            r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
-            r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
+        #     r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
+        #     r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
+        #     r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
+        #     r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
 
         return Response(serializer.data)
 
