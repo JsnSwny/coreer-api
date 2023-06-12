@@ -22,15 +22,16 @@ from channels.db import database_sync_to_async
 #             except Token.DoesNotExist:
 #                 scope['user'] = AnonymousUser()
 #         return await self.inner(scope, receive, send)
-
-from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
 
 @database_sync_to_async
 def get_user(token_key):
     try:
-        user, _ = TokenAuthentication().authenticate_credentials(token_key)
+        print("FOUND USER")
+        token = Token.objects.get(key=token_key)
+        user = token.user
     except Exception:
+        print("COULDNT FIND USER")
         user = None
     return user
 
