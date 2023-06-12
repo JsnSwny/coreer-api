@@ -25,19 +25,22 @@ class ChatConsumer(JsonWebsocketConsumer):
             if id != self.user.id:
                 return User.objects.get(id=id)
 
-    async def connect(self):
+    def connect(self):
         print("CONSUMER CONNECTED")
         print(self.scope)
 
         self.user = self.scope["user"]
         self.conversation_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.conversation, created = Conversation.objects.get_or_create(name=self.conversation_name)
+        
 
-
-        await self.channel_layer.group_add(
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
             self.conversation_name,
-            self.channel_name
+            self.channel_name,
         )
+
+        
 
         self.accept()
 
