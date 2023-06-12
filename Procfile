@@ -1,1 +1,1 @@
-web: daphne coreer.asgi:application --port $PORT --bind 0.0.0.0
+web: gunicorn coreer.wsgi --log-file -
