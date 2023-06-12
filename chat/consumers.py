@@ -26,6 +26,9 @@ class ChatConsumer(JsonWebsocketConsumer):
                 return User.objects.get(id=id)
 
     def connect(self):
+        print("CONSUMER CONNECTED")
+        print(self.scope)
+
         self.user = self.scope["user"]
         self.conversation_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.conversation, created = Conversation.objects.get_or_create(name=self.conversation_name)

@@ -30,6 +30,7 @@ def get_user(token_key):
         print("FOUND USER")
         token = Token.objects.get(key=token_key)
         user = token.user
+        print(user)
     except Exception:
         print("COULDNT FIND USER")
         user = None
@@ -45,4 +46,6 @@ class TokenAuthMiddleware(BaseMiddleware):
         except ValueError:
             token_key = None
         scope['user'] = AnonymousUser() if token_key is None else await get_user(token_key)
+
+        print("SUCCESS")
         return await super().__call__(scope, receive, send)
