@@ -100,7 +100,17 @@ REST_AUTH = {
 
 ASGI_APPLICATION = "coreer.asgi.application"
 
-CHANNEL_LAYERS = {
+if IS_HEROKU_APP:
+    CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis-16545.c243.eu-west-1-3.ec2.cloud.redislabs.com", 16545)],
+        },
+    },
+}
+else:
+    CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
@@ -108,6 +118,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
 
 AUTH_USER_MODEL = "accounts.CustomUser" 
 

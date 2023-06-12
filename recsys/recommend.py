@@ -13,6 +13,7 @@ import math
 from operator import itemgetter
 from django.db.models import Q
 import heapq
+from django.conf import settings
 
 def base_recommend(r, user_id, id_dict, n):
     start_time = time.time()
@@ -145,7 +146,10 @@ def build_user_similarity_matrix(r, user_id, user_ids, id_dict, n):
     return sorted_scores
 
 def get_top_n_recommendations(user_id, n, users_n=160000):
-    r = redis.Redis(host='localhost', port=6379, db=0)
+    if settings.IS_HEROKU_APP:
+        r = redis.Redis(host='localhost', port=6379, db=0)
+    else:
+        r = redis.Redis(host='redis-16545.c243.eu-west-1-3.ec2.cloud.redislabs.com', port=16545, db=0)
     # r.flushdb()
     # COLLABORATIVE FILTERING
     # -----------------------
