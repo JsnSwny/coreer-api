@@ -59,7 +59,7 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
         user = request.user
 
         user.username = self.get_unique_username(user.first_name, user.last_name)
-
+        user.save()
 
         # CODE FOR UPDATING RECOMMENDATIONS
         # if len(user.languages.all()) > 0:
