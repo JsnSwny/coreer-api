@@ -89,7 +89,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField('email address', unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    bio = models.CharField(max_length=500, default="")
+    bio = models.CharField(max_length=500, default="", blank=True, null=True)
     job = models.CharField(max_length=500, blank=True, null=True)
     lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     lon = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
