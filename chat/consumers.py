@@ -25,7 +25,7 @@ class ChatConsumer(JsonWebsocketConsumer):
             if id != self.user.id:
                 return User.objects.get(id=id)
 
-    def connect(self):
+    async def connect(self):
         print("CONSUMER CONNECTED")
         print(self.scope)
 
@@ -33,13 +33,11 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.conversation_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.conversation, created = Conversation.objects.get_or_create(name=self.conversation_name)
 
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.conversation_name,
-            self.channel_name,
-        )
 
-        
+        await self.channel_layer.group_add(
+            self.conversation_name,
+            self.channel_name
+        )
 
         self.accept()
 
