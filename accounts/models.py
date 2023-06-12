@@ -3,7 +3,14 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Language(models.Model):
+    CATEGORY_TYPES = (
+        ('L', 'Language'),
+        ('F', 'Framework'),
+        ('O', 'Other')
+    )
+
     name = models.CharField(max_length=255, unique=True)
+    category = models.CharField(max_length=1, choices=CATEGORY_TYPES, default="O")
     icon_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
