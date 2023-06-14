@@ -40,7 +40,8 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'https://coreer.co',
     'https://www.coreer.co',
-    'https://www.coreer.herokuapp.com'
+    'https://coreer.herokuapp.com',
+    'https://www.coreer.herokuapp.com',
 ]
 
 
