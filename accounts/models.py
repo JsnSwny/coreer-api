@@ -151,7 +151,7 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
 
 class ProjectAnswer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_answers")
