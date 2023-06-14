@@ -147,11 +147,13 @@ class Project(models.Model):
     video = models.FileField(upload_to="project_videos", null=True, blank=True)
     user = models.ForeignKey(CustomUser, related_name='projects', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    start_date = models.DateField()
+    start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class ProjectAnswer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_answers")
