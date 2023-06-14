@@ -42,8 +42,16 @@ CORS_ORIGIN_WHITELIST = [
     'https://www.coreer.co',
     'https://coreer.herokuapp.com',
     'https://www.coreer.herokuapp.com',
+    'https://www.coreer.herokuapp.com/',
+    'https://coreer.herokuapp.com/',
     
 ]
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000',
+    'https://coreer.co',
+    'https://www.coreer.co',
+    'https://coreer.herokuapp.com',
+    'https://www.coreer.herokuapp.com',]
 
 
 # Application definition
