@@ -152,8 +152,18 @@ class Project(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+    github_link = models.URLField(max_length=200, null=True, blank=True)
+    project_link = models.URLField(max_length=200, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(Project, default=None, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='uploads/',
+                              verbose_name='Image')
 
 class ProjectAnswer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_answers")
