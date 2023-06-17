@@ -152,7 +152,7 @@ class Project(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
-    github_link = models.URLField(max_length=200, null=True, blank=True)
+    repo_link = models.URLField(max_length=200, null=True, blank=True)
     project_link = models.URLField(max_length=200, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
