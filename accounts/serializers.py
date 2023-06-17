@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel, ProjectImage
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, response
 import geocoder
@@ -17,13 +17,12 @@ class InterestSerializer(serializers.ModelSerializer):
         model = Interest
         fields = '__all__'
 
+# class ProjectImageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProjectImage
+#         fields = ('image',)
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-    languages = LanguageSerializer(read_only=True, many=True)
-    class Meta:
-        model = Project
-        fields = '__all__'
 
 class SchoolSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,6 +66,27 @@ class SocialAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialAccount
         fields = ['provider', 'uid', 'extra_data']
+
+class BasicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'first_name', 'last_name', 'image',)
+
+class ProjectSerializer(serializers.ModelSerializer):
+    languages = LanguageSerializer(read_only=True, many=True)
+    images = serializers.SerializerMethodField()
+    user = BasicUserSerializer(read_only=True, many=False)
+    user_id = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all(), source='user', many=False, write_only=True, required=False)
+
+    class Meta:
+        model = Project
+        fields = '__all__'
+
+    def get_images(self, obj):
+        project_images = ProjectImage.objects.filter(project=obj)
+        image_urls = [image.image.url for image in project_images]
+        return image_urls
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):

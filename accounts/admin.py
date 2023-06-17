@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Follow, Language, Interest, Project, School, Education, Question, UserAnswer, CareerLevel, ProjectAnswer
+from .models import CustomUser, Follow, Language, Interest, Project, School, Education, Question, UserAnswer, CareerLevel, ProjectAnswer, ProjectImage
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -41,6 +41,7 @@ class UserAnswerAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Follow, FollowAdmin)
 admin.site.register(Language)
+admin.site.register(ProjectImage)
 admin.site.register(Interest)
 admin.site.register(CareerLevel)
 admin.site.register(ProjectAnswer)

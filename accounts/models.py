@@ -154,6 +154,7 @@ class Project(models.Model):
     content = models.TextField(null=True, blank=True)
     repo_link = models.URLField(max_length=200, null=True, blank=True)
     project_link = models.URLField(max_length=200, null=True, blank=True)
+    video_link = models.URLField(max_length=200, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -161,7 +162,7 @@ class Project(models.Model):
     
 
 class ProjectImage(models.Model):
-    project = models.ForeignKey(Project, default=None, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, default=None, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to='uploads/',
                               verbose_name='Image')
 
