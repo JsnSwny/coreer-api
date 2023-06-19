@@ -74,6 +74,7 @@ class BasicUserSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)
+    languages_id = serializers.CharField(write_only=True, required=False)
     images = serializers.SerializerMethodField()
     user = BasicUserSerializer(read_only=True, many=False)
     user_id = serializers.PrimaryKeyRelatedField(
@@ -87,6 +88,20 @@ class ProjectSerializer(serializers.ModelSerializer):
         project_images = ProjectImage.objects.filter(project=obj)
         image_urls = [image.image.url for image in project_images]
         return image_urls
+    
+    def create(self, validated_data):
+        languages_id = validated_data.pop('languages_id', None)
+        if languages_id:
+            language_ids = languages_id.split(',')  # Split comma-separated string into a list
+            validated_data['languages'] = language_ids
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        languages_id = validated_data.pop('languages_id', None)
+        if languages_id:
+            language_ids = languages_id.split(',')  # Split comma-separated string into a list
+            validated_data['languages'] = language_ids
+        return super().update(instance, validated_data)
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):

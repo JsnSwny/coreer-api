@@ -143,15 +143,14 @@ class WorkExperience(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     
 class Project(models.Model):
-    image = models.ImageField(upload_to='uploads/', blank=True)
+    image = models.ImageField(upload_to='uploads/', blank=True, null=True)
     video = models.FileField(upload_to="project_videos", null=True, blank=True)
     user = models.ForeignKey(CustomUser, related_name='projects', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    description = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     languages = models.ManyToManyField(Language, null=True, blank=True)
-    content = models.TextField(null=True, blank=True)
     repo_link = models.URLField(max_length=200, null=True, blank=True)
     project_link = models.URLField(max_length=200, null=True, blank=True)
     video_link = models.URLField(max_length=200, null=True, blank=True)
