@@ -44,6 +44,11 @@ class CareerLevelSerializer(serializers.ModelSerializer):
         model = CareerLevel
         fields = '__all__'
 
+class ProjectImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectImage
+        fields = '__all__'
+
 class UserAnswerSerializer(serializers.ModelSerializer):
     question = QuestionSerializer(read_only=True)
     question_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Question.objects.all(), source="question")

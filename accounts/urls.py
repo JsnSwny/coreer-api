@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .api import UserAPI, RetrieveProfile, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet, CareerLevelList
+from .api import UserAPI, RetrieveProfile, UpdateUserViewSet, FollowAPIView, InterestViewSet, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet, CareerLevelList, ProjectImageViewSet
 from .views import GitHubLogin, exchange_code_for_access_token
 
 from .views import get_popular_languages
@@ -12,7 +12,8 @@ router.register('projects', ProjectViewSet, 'projects')
 router.register('schools', SchoolViewSet, 'schools')
 router.register('educations', EducationViewSet, 'educations')
 router.register('work-experiences', WorkExperienceViewSet, 'work-experiences')
-router.register('user-answers', UserAnswerViewSet, 'work-experiences')
+router.register('user-answers', UserAnswerViewSet, 'user-answers')
+router.register('project-images', ProjectImageViewSet, 'project-images')
 
 urlpatterns = [
     path('most-popular-languages/', get_popular_languages),
