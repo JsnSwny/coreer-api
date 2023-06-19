@@ -163,7 +163,7 @@ class Project(models.Model):
 class ProjectImage(models.Model):
     project = models.ForeignKey(Project, default=None, on_delete=models.CASCADE, related_name="images", null=True, blank=True)
     image = models.ImageField(upload_to='uploads/',
-                              verbose_name='Image')
+                              verbose_name='Image', null=True, blank=True)
 
 class ProjectAnswer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_answers")

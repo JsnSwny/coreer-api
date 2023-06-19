@@ -224,7 +224,7 @@ class ProjectImageViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectImageSerializer
 
     def get_queryset(self):
-        return WorkExperience.objects.all()
+        return ProjectImage.objects.all()
     
 
 class FollowAPIView(viewsets.ModelViewSet):
