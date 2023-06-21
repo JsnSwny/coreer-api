@@ -129,7 +129,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
-        return Project.objects.all()
+        return super().get_queryset().order_by('-created_at')
     
 
     @action(detail=True, methods=['post'])
