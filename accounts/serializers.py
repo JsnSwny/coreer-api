@@ -48,7 +48,7 @@ class ProjectImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectImage
         fields = '__all__'
-        
+
 class UserAnswerSerializer(serializers.ModelSerializer):
     question = QuestionSerializer(read_only=True)
     question_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Question.objects.all(), source="question")
@@ -75,7 +75,7 @@ class SocialAccountSerializer(serializers.ModelSerializer):
 class BasicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'image',)
+        fields = ('id', 'first_name', 'last_name', 'username', 'image',)
 
 class ProjectSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(read_only=True, many=True)

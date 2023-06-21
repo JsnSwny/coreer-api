@@ -13,6 +13,7 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action
 
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [
@@ -130,6 +131,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Project.objects.all()
     
+
+    @action(detail=True, methods=['post'])
+    def pin(self, request, pk=None):
+        project = self.get_object()
+        user = request.user
+
+        # Unpin the currently pinned project (if any)
+        user.projects.filter(is_pinned=True).update(is_pinned=False)
+
+        # Pin the selected project
+        project.is_pinned = True
+        project.save()
+
+        return Response({'message': 'Project pinned successfully.'})
+    
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
@@ -222,6 +238,9 @@ class WorkExperienceViewSet(viewsets.ModelViewSet):
 class ProjectImageViewSet(viewsets.ModelViewSet):
     queryset = ProjectImage.objects.all()
     serializer_class = ProjectImageSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['project__id']
 
     def get_queryset(self):
         return ProjectImage.objects.all()

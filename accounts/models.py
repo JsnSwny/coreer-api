@@ -155,6 +155,8 @@ class Project(models.Model):
     project_link = models.URLField(max_length=200, null=True, blank=True)
     video_link = models.URLField(max_length=200, null=True, blank=True)
 
+    is_pinned = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
