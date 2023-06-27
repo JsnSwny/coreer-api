@@ -128,6 +128,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['is_visible']
+
     def get_queryset(self):
         return super().get_queryset().order_by('-created_at')
     

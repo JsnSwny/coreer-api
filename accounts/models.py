@@ -154,6 +154,7 @@ class Project(models.Model):
     repo_link = models.URLField(max_length=200, null=True, blank=True)
     project_link = models.URLField(max_length=200, null=True, blank=True)
     video_link = models.URLField(max_length=200, null=True, blank=True)
+    is_visible = models.BooleanField(default=True)
 
     is_pinned = models.BooleanField(default=False)
 
