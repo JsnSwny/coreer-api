@@ -3,12 +3,18 @@ from rest_framework import serializers
 from chat.models import Message, Conversation
 from accounts.serializers import UserSerializer
 from django.contrib.auth import get_user_model
+from accounts.models import CustomUser
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    from_user = UserSerializer()
-    to_user = UserSerializer()
+    from_user = UserSerializer(read_only=True)
+    to_user = UserSerializer(read_only=True)
+    from_user_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=CustomUser.objects.all(), source="from_user")
+    to_user_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=CustomUser.objects.all(), source="to_user")
+
     conversation = serializers.SerializerMethodField()
+    conversation_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Conversation.objects.all(), source="conversation")
+
 
     class Meta:
         model = Message
@@ -17,6 +23,9 @@ class MessageSerializer(serializers.ModelSerializer):
             "conversation",
             "from_user",
             "to_user",
+            "to_user_id",
+            "from_user_id",
+            "conversation_id",
             "content",
             "timestamp",
             "read",
