@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer, QuestionSerializer, UserAnswerSerializer, CareerLevelSerializer, ProjectImageSerializer
-from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel, ProjectImage
+from .serializers import ProfilesSerializer, UserSerializer, LoginSerializer, RegisterSerializer, FollowSerializer, InterestSerializer, ProjectSerializer, SchoolSerializer, EducationSerializer, WorkExperienceSerializer, QuestionSerializer, UserAnswerSerializer, CareerLevelSerializer, ProjectImageSerializer, LanguageSerializer
+from .models import CustomUser, Follow, Interest, Project, School, Education, WorkExperience, Question, UserAnswer, CareerLevel, ProjectImage, Language
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, login
@@ -30,12 +30,14 @@ class CustomPagination(PageNumberPagination):
     page_size_query_param = 'perPage'
     max_page_size = 100
 
-
-class UpdateUserViewSet(viewsets.ModelViewSet):
+class UsersList(generics.ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
     queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ProfilesSerializer
     pagination_class = CustomPagination
-
+    
     search_fields = ['first_name', 'last_name', 'job', 'location', 'bio', 'languages__name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = {
@@ -50,71 +52,6 @@ class UpdateUserViewSet(viewsets.ModelViewSet):
             username = f"{base_username}-{counter}"
             counter += 1
         return username
-
-
-    def update(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        user = request.user
-
-        if not user.username:
-            user.username = self.get_unique_username(user.first_name, user.last_name)
-            user.save()
-
-        # CODE FOR UPDATING RECOMMENDATIONS
-        # if len(user.languages.all()) > 0:
-        #     clean_input = ""
-        #     if user.bio:
-        #         clean_input += user.bio
-
-        #     if len(user.interests.all()) > 0:
-        #         for interest in user.interests.all():
-        #             clean_input += f"{interest.name} "
-
-        #     if len(user.languages.all()) > 0:
-        #         for language in user.languages.all():
-        #             clean_input += f"[lang_{language.name}] "
-            
-        #     user.tfidf_input = clean_input
-        #     user.save()
-
-        #     r = redis.Redis(host='localhost', port=6379, db=0)
-
-        #     user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
-        #     id_dict = dict(zip(user_ids, range(len(user_ids))))
-        #     following = Follow.objects.values_list("follower__id", "following__id")
-
-            
-        #     row = []
-        #     col = []
-        #     data = []
-
-        #     for i in following:
-        #         row.append(id_dict[i[0]])
-        #         col.append(id_dict[i[1]])
-        #         data.append(1)
-
-        #     sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
-
-        #     r.set('csr_matrix_data', sparse_matrix.data.tobytes())
-        #     r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
-        #     r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
-        #     r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
-
-        #     vec = TfidfVectorizer(strip_accents="unicode", stop_words="english")
-        #     user_bios = list(CustomUser.objects.values_list("tfidf_input", flat=True).order_by("id"))
-        #     tfidf_matrix = vec.fit_transform(user_bios)
-
-        #     r.set('tfidf_matrix_data', tfidf_matrix.data.tobytes())
-        #     r.set('tfidf_matrix_indices', tfidf_matrix.indices.tobytes())
-        #     r.set('tfidf_matrix_indptr', tfidf_matrix.indptr.tobytes())
-        #     r.set('tfidf_matrix_shape', np.array(tfidf_matrix.shape, dtype=np.int32).tobytes())
-
-        return Response(serializer.data)
-
-# Get User API
 
 class RetrieveProfile(generics.RetrieveAPIView):
     serializer_class = ProfilesSerializer
@@ -154,8 +91,6 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
 
     def create(self, request, *args, **kwargs):
-        print("Follow created")
-        
         response = super().create(request, *args, **kwargs)
 
         r = redis.Redis(host='localhost', port=6379, db=0)
@@ -182,25 +117,49 @@ class FollowViewSet(viewsets.ModelViewSet):
         return response
 
     def get_queryset(self):
-        return Follow.objects.all()
+        return Follow.objects.filter(follower=self.user)
     
-class InterestViewSet(viewsets.ModelViewSet):
+
+    
+class UserAnswerViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    queryset = UserAnswer.objects.all()
+    serializer_class = UserAnswerSerializer
+
+
+class QuestionList(generics.ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = QuestionSerializer
+    queryset = Question.objects.all()
+
+class InterestList(generics.ListAPIView):
+    # permission_classes = [
+    #     permissions.IsAuthenticated,
+    # ]
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
 
     def get_queryset(self):
         return Interest.objects.all()
     
-class UserAnswerViewSet(viewsets.ModelViewSet):
-    queryset = UserAnswer.objects.all()
-    serializer_class = UserAnswerSerializer
+class LanguageList(generics.ListAPIView):
+    # permission_classes = [
+    #     permissions.IsAuthenticated,
+    # ]
+    queryset = Language.objects.all()
+    serializer_class = LanguageSerializer
 
-
-class QuestionList(generics.ListAPIView):
-    serializer_class = QuestionSerializer
-    queryset = Question.objects.all()
+    def get_queryset(self):
+        return Language.objects.all()
 
 class CareerLevelList(generics.ListAPIView):
+    # permission_classes = [
+    #     permissions.IsAuthenticated,
+    # ]
     serializer_class = CareerLevelSerializer
     queryset = CareerLevel.objects.all()
 
@@ -211,6 +170,7 @@ class SchoolPagination(PageNumberPagination):
     page_size = 50
     page_size_query_param = 'perPage'
     max_page_size = 100
+    
 
 class SchoolViewSet(viewsets.ModelViewSet):
     queryset = School.objects.all()
@@ -224,18 +184,17 @@ class SchoolViewSet(viewsets.ModelViewSet):
         return School.objects.all()
     
 class EducationViewSet(viewsets.ModelViewSet):
-    queryset = Education.objects.all()
     serializer_class = EducationSerializer
 
     def get_queryset(self):
-        return Education.objects.all()
+        return Education.objects.filter(user=self.user)
     
 class WorkExperienceViewSet(viewsets.ModelViewSet):
     queryset = WorkExperience.objects.all()
     serializer_class = WorkExperienceSerializer
 
     def get_queryset(self):
-        return WorkExperience.objects.all()
+        return WorkExperience.objects.filter(user=self.user)
     
 
 class ProjectImageViewSet(viewsets.ModelViewSet):
@@ -259,12 +218,10 @@ class FollowAPIView(viewsets.ModelViewSet):
     ordering_fields = ['followed_on']
 
     def get_queryset(self):
-        print("Get me some follows")
         return Follow.objects.filter(follower=self.request.user)
 
     def create(self, request, *args, **kwargs):
         following_id = request.data.get('following_id')
-        print(f"POST: Following id is: {following_id}")
         if not following_id:
             return Response({'error': 'following_id is required'}, status=400)
         
@@ -275,61 +232,11 @@ class FollowAPIView(viewsets.ModelViewSet):
             return Response({'error': 'User not found'}, status=404)
 
         follow, created = Follow.objects.get_or_create(follower=request.user, following=following)
-        # r = redis.Redis(host='localhost', port=6379, db=0)
-
-        # if r.exists('csr_matrix_data'):
-        #     print("Exists")
-        # else:
-        #     user_objects = CustomUser.objects.all().order_by("id")
-        #     user_ids = list(user_objects.values_list("id", flat=True))
-        #     id_dict = dict(zip(user_ids, range(len(user_ids))))
-            
-        #     following = Follow.objects.all().values_list("follower__id", "following__id")
-            
-        #     row = []
-        #     col = []
-        #     data = []
-
-        #     for i in following:
-        #         row.append(id_dict[i[0]])
-        #         col.append(id_dict[i[1]])
-        #         data.append(1)
-
-        #     sparse_matrix = csr_matrix((data, (row, col)), shape=(len(user_ids), len(user_ids)), dtype=np.int32)
-
-        #     r.set('csr_matrix_data', sparse_matrix.data.tobytes())
-        #     r.set('csr_matrix_indices', sparse_matrix.indices.tobytes())
-        #     r.set('csr_matrix_indptr', sparse_matrix.indptr.tobytes())
-        #     r.set('csr_matrix_shape', np.array(sparse_matrix.shape, dtype=np.int32).tobytes())
-
-        #     print("MATRIX DATA CREATED")
-   
-        # csr_matrix_data = np.frombuffer(r.get('csr_matrix_data'), dtype=np.int32)
-        # csr_matrix_indices = np.frombuffer(r.get('csr_matrix_indices'), dtype=np.int32)
-        # csr_matrix_indptr = np.frombuffer(r.get('csr_matrix_indptr'), dtype=np.int32)
-        # csr_matrix_shape = np.frombuffer(r.get('csr_matrix_shape'), dtype=np.int32)
-        # sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=tuple(csr_matrix_shape))
-
-        # user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
-        # id_dict = dict(zip(user_ids, range(len(user_ids))))
-
-        # sparse_matrix_copy = sparse_matrix.copy() 
-
-        # sparse_matrix_copy[id_dict[request.user.id], id_dict[following_id]] = 1
-        
-        
-        # r.set('csr_matrix_data', sparse_matrix_copy.data.tobytes())
-        # r.set('csr_matrix_indices', sparse_matrix_copy.indices.tobytes())
-        # r.set('csr_matrix_indptr', sparse_matrix_copy.indptr.tobytes())
-        # r.set('csr_matrix_shape', np.array(sparse_matrix_copy.shape, dtype=np.int32).tobytes())
-        # if not created:
-        #     return Response({'error': 'Already following this user'}, status=400)
 
         return Response(True)
 
     def delete(self, request, *args, **kwargs):
         following_id = request.data.get('following_id')
-        print(f"DELETE: Following id is: {following_id}")
         if not following_id:
             return Response({'error': 'following_id is required'}, status=400)
 
@@ -339,31 +246,7 @@ class FollowAPIView(viewsets.ModelViewSet):
             return Response({'error': 'User not found'}, status=404)
 
         follow = Follow.objects.filter(follower=request.user, following=following).first()
-        # r = redis.Redis(host='localhost', port=6379, db=0)
-   
-        # csr_matrix_data = np.frombuffer(r.get('csr_matrix_data'), dtype=np.int32)
-        # csr_matrix_indices = np.frombuffer(r.get('csr_matrix_indices'), dtype=np.int32)
-        # csr_matrix_indptr = np.frombuffer(r.get('csr_matrix_indptr'), dtype=np.int32)
-        # csr_matrix_shape = np.frombuffer(r.get('csr_matrix_shape'), dtype=np.int32)
-        # sparse_matrix = csr_matrix((csr_matrix_data, csr_matrix_indices, csr_matrix_indptr), shape=tuple(csr_matrix_shape))
-
-        # user_ids = list(CustomUser.objects.values_list("id", flat=True).order_by("id"))
-        # id_dict = dict(zip(user_ids, range(len(user_ids))))
-
-        # sparse_matrix_copy = sparse_matrix.copy() 
-
-        # sparse_matrix_copy[id_dict[request.user.id], id_dict[following_id]] = 1
-        
-        
-        # r.set('csr_matrix_data', sparse_matrix_copy.data.tobytes())
-        # r.set('csr_matrix_indices', sparse_matrix_copy.indices.tobytes())
-        # r.set('csr_matrix_indptr', sparse_matrix_copy.indptr.tobytes())
-        # r.set('csr_matrix_shape', np.array(sparse_matrix_copy.shape, dtype=np.int32).tobytes())
-        # if not follow:
-        #     return Response({'error': 'Not following this user'}, status=400)
 
         follow.delete()
-
-        print(self)
 
         return Response(True)

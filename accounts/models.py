@@ -131,7 +131,7 @@ class Education(models.Model):
     degree = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    description = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
 
 class WorkExperience(models.Model):
     user = models.ForeignKey(CustomUser, related_name='work_experiences', on_delete=models.CASCADE, null=True, blank=True)
@@ -140,7 +140,7 @@ class WorkExperience(models.Model):
     location = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    description = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     
 class Project(models.Model):
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
