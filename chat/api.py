@@ -46,25 +46,25 @@ class MessageViewSet(ModelViewSet):
         self.perform_create(serializer)
 
         # Check if the most recent message was more than an hour ago
-        last_message = Message.objects.filter(to_user=self.request.user).order_by('-timestamp').first()
-        if last_message and timezone.now() - last_message.timestamp > timedelta(hours=1):
-            # Send email notification to the 'to_user'
-            send_mail(
-                'New Message Notification',
-                'You have received a new message.',
-                'coreer.info@gmail.com',  # Replace with the sender's email address
-                [last_message.to_user.email],  # Replace with the recipient's email address
-                fail_silently=False,
-            )
-        else:
-            if not last_message:
-                send_mail(
-                    'New Message Notification',
-                    'You have received your first message on Coreer.',
-                    'coreer.info@gmail.com',  # Replace with the sender's email address
-                    [self.to_user.email],  # Replace with the recipient's email address
-                    fail_silently=False,
-                )
+        # last_message = Message.objects.filter(to_user=self.request.user).order_by('-timestamp').first()
+        # if last_message and timezone.now() - last_message.timestamp > timedelta(hours=1):
+        #     # Send email notification to the 'to_user'
+        #     send_mail(
+        #         'New Message Notification',
+        #         'You have received a new message.',
+        #         'coreer.info@gmail.com',  # Replace with the sender's email address
+        #         [last_message.to_user.email],  # Replace with the recipient's email address
+        #         fail_silently=False,
+        #     )
+        # else:
+        #     if not last_message:
+        #         send_mail(
+        #             'New Message Notification',
+        #             'You have received your first message on Coreer.',
+        #             'coreer.info@gmail.com',  # Replace with the sender's email address
+        #             [self.to_user.email],  # Replace with the recipient's email address
+        #             fail_silently=False,
+        #         )
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
