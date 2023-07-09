@@ -31,7 +31,8 @@ class Interest(models.Model):
 class CareerLevel(models.Model):
     INTEREST_TYPES = (
         ('S', 'Student'),
-        ('P', 'Professional')
+        ('P', 'Professional'),
+        ('R', 'Recruiter'),
     )
 
     name = models.CharField(max_length=20)
