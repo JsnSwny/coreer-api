@@ -228,6 +228,7 @@ class ProfilesSerializer(serializers.ModelSerializer):
     interests = InterestSerializer(read_only=True, many=True)
     user_answers = UserAnswerSerializer(read_only=True, many=True)
     looking_for = CareerLevelSerializer(read_only=True, many=True)
+    current_level = CareerLevelSerializer(read_only=True)
     class Meta:
         model = CustomUser
         fields = ('id', 'username', 'user_answers', 'interests', 'current_level', 'looking_for', 'work_experiences', 'image', 'first_name', 'last_name', 'onboarded', 'languages', 'educations', 'projects', 'email', 'job', 'location', 'lat', 'lon', 'bio', 'profile_photo')
