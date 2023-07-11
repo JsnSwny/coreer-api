@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .api import UserAPI, RetrieveProfile, FollowAPIView, ProjectViewSet, SchoolViewSet, EducationViewSet, WorkExperienceViewSet, QuestionList, UserAnswerViewSet, CareerLevelList, ProjectImageViewSet, UsersList, InterestList, LanguageList
 from .views import GitHubLogin, exchange_code_for_access_token
+from dj_rest_auth.views import PasswordResetConfirmView
 
 from .views import get_popular_languages
 from rest_framework import routers
@@ -17,7 +18,12 @@ urlpatterns = [
     path('api/auth/alt-user/', UserAPI.as_view()),
     path('accounts/', include('allauth.urls')),
     path('api/auth/', include('dj_rest_auth.urls')),
+    path(
+        'rest-auth/password/reset/confirm/<slug:uidb64>/<slug:token>/',
+        PasswordResetConfirmView.as_view(), name='password_reset_confirm'
+    ),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
+    
     path('exchange-token/', exchange_code_for_access_token, name="exchange_token"),
     path('api/github/', GitHubLogin.as_view(), name='github_login'),
     path('api/questions/', QuestionList.as_view(), name="question-list"),

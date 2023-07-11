@@ -24,11 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-o(^31kgv6=e*qg_g0jxb85yg6)etn+oyw5)_xj9u9y2qb^!@9='
 
+SITE_URL = "www.coreer.co"
+
 IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if not IS_HEROKU_APP:
     DEBUG = True
+    SITE_URL = "192.168.0.14:8000"
 
 ALLOWED_HOSTS = ['*']
 
@@ -88,6 +91,9 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
+OLD_PASSWORD_FIELD_ENABLED = True
+LOGOUT_ON_PASSWORD_CHANGE = False
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
@@ -110,7 +116,10 @@ REGISTRATION_SERIALIZER = 'accounts.serializers.RegisterSerializer'
 
 REST_AUTH = {
     'REGISTER_SERIALIZER': 'accounts.serializers.RegisterSerializer',
-    'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer'
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'accounts.serializers.MyPasswordResetSerializer',
+    'PASSWORD_RESET_USE_SITES_DOMAIN': True,
+    'OLD_PASSWORD_FIELD_ENABLED': True,
 }
 
 ASGI_APPLICATION = "coreer.asgi.application"
@@ -153,14 +162,14 @@ ROOT_URLCONF = 'coreer.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'accounts/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+              'django.contrib.messages.context_processors.messages',
             ],
         },
     },
