@@ -43,7 +43,7 @@ def load_data_from_csv(csv_path):
             #     lon = None
 
             obj = CustomUser(id=row[0], first_name=user["name"]["first"], last_name=user["name"]["last"],
-                             email=f"generated_user_{count}@ai.com", bio=row[3], job=row[10], profile_photo=user["picture"]["large"])
+                             email=f"user_{count}@coreer.co", bio=row[3], job=row[10], profile_photo=user["picture"]["large"])
             data.append(obj)
             print(f"Added: {idx}")
             count += 1

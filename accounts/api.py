@@ -60,10 +60,16 @@ class RetrieveProfile(generics.RetrieveAPIView):
         username = self.kwargs['username']
         obj = get_object_or_404(CustomUser.objects.filter(username=username))
         return obj
+
+class ProjectPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'perPage'
+    max_page_size = 25
     
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    pagination_class = ProjectPagination
 
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['is_visible']
